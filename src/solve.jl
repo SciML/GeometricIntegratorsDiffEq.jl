@@ -77,8 +77,8 @@ function solve{uType,tType,isinplace,AlgType<:GeometricIntegratorAlgorithm}(
 
     if typeof(u0) <: Union{AbstractArray}
         _timeseries = Vector{uType}(0)
-        for i=start_idx:size(sol.q, 1)
-            push!(_timeseries, reshape(view(sol.q, :, i)', sizeu))
+        for i=start_idx:size(sol.q, 2)
+            push!(_timeseries, reshape(view(sol.q, :, i-1)', sizeu))
         end
     elseif typeof(u0) <: Union{Tuple}
         _timeseries = Vector{typeof(u0[1])}(0)
