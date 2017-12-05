@@ -26,4 +26,4 @@ sol = solve(prob,GIEuler(),dt=0.1)
 using Plots; plot(sol,vars=(1,2,3))
 ```
 
-The options available in `solve` are documented [at the common solver options page](http://docs.juliadiffeq.org/latest/basics/common_solver_opts.html). The available methods are documented [at the ODE solvers page](http://docs.juliadiffeq.org/latest/solvers/ode_solve.html#ODEInterface.jl-1).
+The options available in `solve` are documented [at the common solver options page](http://docs.juliadiffeq.org/latest/basics/common_solver_opts.html). The available methods are documented [at the ODE solvers page](http://docs.juliadiffeq.org/latest/solvers/ode_solve.html#GeometricIntegrators.jl-1).
