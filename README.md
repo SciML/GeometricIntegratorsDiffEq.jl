@@ -13,7 +13,7 @@ package, see the [DifferentialEquations.jl documentation](https://juliadiffeq.gi
 This library adds the common interface to GeometricIntegrators.jl's solvers. [See the DifferentialEquations.jl documentation for details on the interface](http://docs.juliadiffeq.org/latest/index.html). Following the Lorenz example from [the ODE tutorial](http://docs.juliadiffeq.org/latest/tutorials/ode_example.html), we can solve this using `GIEuler` via the following:
 
 ```julia
-using ODEInterfaceDiffEq
+using GeometricIntegratorsDiffEq
 function lorenz(t,u,du)
  du[1] = 10.0(u[2]-u[1])
  du[2] = u[1]*(28.0-u[3]) - u[2]
