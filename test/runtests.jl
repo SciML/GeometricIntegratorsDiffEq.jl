@@ -21,10 +21,10 @@ sol = solve(prob,GIGLRK(2),dt=0.1)
 
 u0 = zeros(2)
 v0 = ones(2)
-f2 = function (t,u,v,dv)
+f2 = function (dv,u,v,t)
   dv .= -u
 end
-function (::typeof(f2))(::Type{Val{:analytic}}, x, y0)
+function (::typeof(f2))(::Type{Val{:analytic}}, y0, p, x)
   u0, v0 = y0
   ArrayPartition(u0*cos(x) + v0*sin(x), -u0*sin(x) + v0*cos(x))
 end

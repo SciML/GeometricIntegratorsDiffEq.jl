@@ -49,20 +49,23 @@ function solve{uType,tType,isinplace,AlgType<:GeometricIntegratorAlgorithm}(
         sizeu = size(u)
     end
 
+    p = prob.p
+
     if !isinplace && typeof(u)<:AbstractArray
-        f! = (t,u,du) -> (du[:] = vec(prob.f(t,reshape(u,sizeu))); nothing)
+        f! = (t,u,du) -> (du[:] = vec(prob.f(reshape(u,sizeu),p,t)); nothing)
     elseif !(typeof(u)<:Vector{Float64})
-        f! = (t,u,du) -> (prob.f(t,reshape(u,sizeu),reshape(du,sizeu));
-                          u = vec(u); du=vec(du); nothing)
-    else
-        f! = prob.f
+        f! = (t,u,du) -> (prob.f(reshape(du,sizeu),reshape(u,sizeu),p,t); nothing)
+    elseif typeof(prob.problem_type) <: StandardODEProblem
+        f! = (t,u,du) -> prob.f(du,u,p,t)
     end
 
     _alg = get_tableau_from_alg(alg)
     if typeof(prob.problem_type) <: DiffEqBase.StandardODEProblem
-        ode = ODE(prob.f, vec(prob.u0))
+        ode = ODE(f!, vec(prob.u0))
     elseif typeof(prob.problem_type) <: DiffEqBase.AbstractDynamicalODEProblem
-        ode = PODE(prob.f.f1, prob.f.f2, vec(prob.u0[1]),vec(prob.u0[2]))
+        ode = PODE((t,u,v,du)->prob.f.f1(du,u,v,t),
+                   (t,u,v,dv)->prob.f.f2(dv,u,v,t),
+                   vec(prob.u0[1]),vec(prob.u0[2]))
     end
     integrator = Integrator(ode,_alg,dt)
     sol = integrate(integrator, N)
