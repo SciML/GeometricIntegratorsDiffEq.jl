@@ -21,7 +21,7 @@ sol = solve(prob,GIGLRK(2),dt=0.1)
 
 u0 = zeros(2)
 v0 = ones(2)
-f2 = function (dv,u,v,t)
+f2 = function (dv,v,u,t)
   dv .= -u
 end
 function (::typeof(f2))(::Type{Val{:analytic}}, y0, p, x)

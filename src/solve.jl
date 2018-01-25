@@ -63,8 +63,8 @@ function solve{uType,tType,isinplace,AlgType<:GeometricIntegratorAlgorithm}(
     if typeof(prob.problem_type) <: DiffEqBase.StandardODEProblem
         ode = ODE(f!, vec(prob.u0))
     elseif typeof(prob.problem_type) <: DiffEqBase.AbstractDynamicalODEProblem
-        ode = PODE((t,u,v,du)->prob.f.f1(du,u,v,t),
-                   (t,u,v,dv)->prob.f.f2(dv,u,v,t),
+        ode = PODE((t,u,v,du)->prob.f.f2(du,v,u,t),
+                   (t,u,v,dv)->prob.f.f1(dv,v,u,t),
                    vec(prob.u0[1]),vec(prob.u0[2]))
     end
     integrator = Integrator(ode,_alg,dt)
