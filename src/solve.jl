@@ -1,5 +1,5 @@
 function solve(
-    prob::AbstractODEProblem{uType,tType,isinplace},
+    prob::DiffEqBase.AbstractODEProblem{uType,tType,isinplace},
     alg::AlgType,
     timeseries=[],ts=[],ks=[];
     verbose=true,
@@ -18,7 +18,7 @@ function solve(
 
     if verbose
         warned = !isempty(kwargs) && check_keywords(alg, kwargs, warnlist)
-        if !(typeof(prob.f) <: AbstractParameterizedFunction) && isstiff
+        if !(typeof(prob.f) <: DiffEqBase.AbstractParameterizedFunction) && isstiff
             if has_tgrad(prob.f)
                 warn("Explicit t-gradient given to this stiff solver is ignored.")
                 warned = true
