@@ -1,11 +1,11 @@
-function solve{uType,tType,isinplace,AlgType<:GeometricIntegratorAlgorithm}(
+function solve(
     prob::AbstractODEProblem{uType,tType,isinplace},
     alg::AlgType,
     timeseries=[],ts=[],ks=[];
     verbose=true,
     save_start=true, dt = nothing,
     timeseries_errors=true,
-    callback=nothing,kwargs...)
+    callback=nothing,kwargs...) where {uType,tType,isinplace,AlgType<:GeometricIntegratorAlgorithm}
 
     if dt == nothing
         error("dt required for fixed timestep methods.")
