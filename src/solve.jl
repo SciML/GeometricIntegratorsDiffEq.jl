@@ -92,7 +92,7 @@ function DiffEqBase.__solve(
         _timeseries = vec(sol.q)
     end
 
-    build_solution(prob,  alg, ts, _timeseries,
+    DiffEqBase.build_solution(prob,  alg, ts, _timeseries,
                    timeseries_errors = timeseries_errors,
                    retcode = :Success)
 end
