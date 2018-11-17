@@ -7,8 +7,6 @@ using Reexport
 
 using GeometricIntegrators
 
-import DiffEqBase: solve
-
 const warnkeywords =
     (:save_idxs, :d_discontinuities, :unstable_check, :save_everystep,
      :save_end, :initialize_save, :adaptive, :abstol, :reltol, :dtmax,
