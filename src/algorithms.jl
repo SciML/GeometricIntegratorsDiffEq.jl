@@ -1,4 +1,4 @@
-abstract type GeometricIntegratorAlgorithm <: DEAlgorithm end
+abstract type GeometricIntegratorAlgorithm <: DiffEqBase.DEAlgorithm end
 struct GIEuler <: GeometricIntegratorAlgorithm end
 struct GIMidpoint <: GeometricIntegratorAlgorithm end
 struct GIHeun <: GeometricIntegratorAlgorithm end
