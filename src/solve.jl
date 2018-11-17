@@ -19,11 +19,11 @@ function DiffEqBase.__solve(
     if verbose
         warned = !isempty(kwargs) && check_keywords(alg, kwargs, warnlist)
         if !(typeof(prob.f) <: DiffEqBase.AbstractParameterizedFunction) && isstiff
-            if has_tgrad(prob.f)
+            if DiffEqBase.has_tgrad(prob.f)
                 warn("Explicit t-gradient given to this stiff solver is ignored.")
                 warned = true
             end
-            if has_jac(prob.f)
+            if DiffEqBase.has_jac(prob.f)
                 warn("Explicit Jacobian given to this stiff solver is ignored.")
                 warned = true
             end
@@ -55,7 +55,7 @@ function DiffEqBase.__solve(
         f! = (t,u,du) -> (du[:] = vec(prob.f(reshape(u,sizeu),p,t)); nothing)
     elseif !(typeof(u)<:Vector{Float64})
         f! = (t,u,du) -> (prob.f(reshape(du,sizeu),reshape(u,sizeu),p,t); nothing)
-    elseif typeof(prob.problem_type) <: StandardODEProblem
+    elseif typeof(prob.problem_type) <: DiffEqBase.StandardODEProblem
         f! = (t,u,du) -> prob.f(du,u,p,t)
     end
 
