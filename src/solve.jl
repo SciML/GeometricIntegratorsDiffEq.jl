@@ -79,12 +79,12 @@ function DiffEqBase.__solve(
     end
 
     if typeof(u0) <: Union{AbstractArray}
-        _timeseries = Vector{uType}(0)
+        _timeseries = Vector{uType}(undef,0)
         for i=start_idx:size(sol.q, 2)
             push!(_timeseries, reshape(view(sol.q, :, i-1)', sizeu))
         end
     elseif typeof(u0) <: Union{Tuple}
-        _timeseries = Vector{typeof(u0[1])}(0)
+        _timeseries = Vector{typeof(u0[1])}(undef,0)
         for i=start_idx:size(sol.q, 2)
             push!(_timeseries, reshape(view(sol.q, :, i-1)', sizeu))
         end
