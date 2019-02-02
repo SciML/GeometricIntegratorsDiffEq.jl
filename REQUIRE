@@ -1,4 +1,4 @@
 julia 1.0
-DiffEqBase
+DiffEqBase 5.0.0
 Reexport
 GeometricIntegrators
