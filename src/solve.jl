@@ -5,7 +5,7 @@ function DiffEqBase.__solve(
     verbose=true,
     save_start=true, dt = nothing,
     timeseries_errors=true,
-    callback=nothing,kwargs...) where {uType,tType,isinplace,AlgType<:GeometricIntegratorAlgorithm}
+    callback=nothing, alias_u0=false, kwargs...) where {uType,tType,isinplace,AlgType<:GeometricIntegratorAlgorithm}
 
     if dt == nothing
         error("dt required for fixed timestep methods.")
@@ -40,7 +40,11 @@ function DiffEqBase.__solve(
     if typeof(u0) <: Number
         u = [u0]
     else
-        u = deepcopy(u0)
+        if alias_u0
+            u = u0
+        else
+            u = deepcopy(u0)
+        end
     end
 
     if typeof(u) <: Tuple
