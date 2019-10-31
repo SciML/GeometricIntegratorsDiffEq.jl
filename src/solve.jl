@@ -31,7 +31,7 @@ function DiffEqBase.__solve(
         warned && warn_compat()
     end
 
-    if prob.callback != nothing || callback != nothing
+    if callback != nothing
         error("GeometricIntegrators is not compatible with callbacks.")
     end
 
