@@ -31,7 +31,7 @@ function DiffEqBase.__solve(
         warned && warn_compat()
     end
 
-    if prob.callback != nothing || callback != nothing
+    if callback != nothing
         error("GeometricIntegrators is not compatible with callbacks.")
     end
 
@@ -69,7 +69,7 @@ function DiffEqBase.__solve(
     elseif typeof(prob.problem_type) <: DiffEqBase.AbstractDynamicalODEProblem
         ode = PODE((t,u,v,du)->prob.f.f2(du,v,u,t),
                    (t,u,v,dv)->prob.f.f1(dv,v,u,t),
-                   vec(prob.u0[1]),vec(prob.u0[2]))
+                   vec(prob.u0.x[1]),vec(prob.u0.x[2]))
     end
     integrator = Integrator(ode,_alg,dt)
     sol = integrate(integrator, N)
@@ -82,13 +82,13 @@ function DiffEqBase.__solve(
         ts = (prob.tspan[1]+dt):dt:prob.tspan[end]
     end
 
-    if typeof(u0) <: Union{AbstractArray}
-        _timeseries = Vector{uType}(undef,0)
+    if typeof(u0) <: DiffEqBase.RecursiveArrayTools.ArrayPartition
+        _timeseries = Vector{typeof(u0.x[1])}(undef,0)
         for i=start_idx:sol.q.nt
-            push!(_timeseries, reshape(view(sol.q, :, i-1)', sizeu))
+            push!(_timeseries, reshape(view(sol.q, :, i-1)', length(u0.x[1])))
         end
-    elseif typeof(u0) <: Union{Tuple}
-        _timeseries = Vector{typeof(u0[1])}(undef,0)
+    elseif typeof(u0) <: Union{AbstractArray}
+        _timeseries = Vector{uType}(undef,0)
         for i=start_idx:sol.q.nt
             push!(_timeseries, reshape(view(sol.q, :, i-1)', sizeu))
         end
