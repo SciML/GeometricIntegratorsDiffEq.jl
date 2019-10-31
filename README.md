@@ -1,8 +1,8 @@
 # GeometricIntegratorsDiffEq.jl
 
-[![Build Status](https://travis-ci.org/ChrisRackauckas/GeometricIntegratorsDiffEq.jl.svg?branch=master)](https://travis-ci.org/ChrisRackauckas/GeometricIntegratorsDiffEq.jl)
-[![Coverage Status](https://coveralls.io/repos/ChrisRackauckas/GeometricIntegratorsDiffEq.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/ChrisRackauckas/GeometricIntegratorsDiffEq.jl?branch=master)
-[![codecov.io](http://codecov.io/github/ChrisRackauckas/GeometricIntegratorsDiffEq.jl/coverage.svg?branch=master)](http://codecov.io/github/ChrisRackauckas/GeometricIntegratorsDiffEq.jl?branch=master)
+[![Build Status](https://travis-ci.org/JuliaDiffEq/GeometricIntegratorsDiffEq.jl.svg?branch=master)](https://travis-ci.org/JuliaDiffEq/GeometricIntegratorsDiffEq.jl)
+[![Coverage Status](https://coveralls.io/repos/JuliaDiffEq/GeometricIntegratorsDiffEq.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/JuliaDiffEq/GeometricIntegratorsDiffEq.jl?branch=master)
+[![codecov.io](http://codecov.io/github/JuliaDiffEq/GeometricIntegratorsDiffEq.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaDiffEq/GeometricIntegratorsDiffEq.jl?branch=master)
 
 This package contains bindings for GeometricIntegrators.jl to allow it to be used with the
 JuliaDiffEq common interface. For more information on using the solvers from this
