@@ -1,7 +1,7 @@
 name = "GeometricIntegratorsDiffEq"
 uuid = "5a33fad7-5ce4-5983-9f5d-5f26ceab5c96"
 authors = ["Chris Rackauckas <accounts@chrisrackauckas.com>"]
-version = "0.0.1"
+version = "0.0.2"
 
 [deps]
 DiffEqBase = "2b5f629d-d688-5b77-993f-72d75c75574e"
