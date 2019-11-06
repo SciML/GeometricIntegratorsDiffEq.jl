@@ -84,12 +84,12 @@ function DiffEqBase.__solve(
 
     if typeof(u0) <: DiffEqBase.RecursiveArrayTools.ArrayPartition
         _timeseries = Vector{typeof(u0.x[1])}(undef,0)
-        for i=start_idx:sol.q.nt
+        for i=start_idx:(sol.q.nt+1)
             push!(_timeseries, reshape(view(sol.q, :, i-1)', length(u0.x[1])))
         end
     elseif typeof(u0) <: Union{AbstractArray}
         _timeseries = Vector{uType}(undef,0)
-        for i=start_idx:sol.q.nt
+        for i=start_idx:(sol.q.nt+1)
             push!(_timeseries, reshape(view(sol.q, :, i-1)', sizeu))
         end
     else
