@@ -6,7 +6,7 @@
 
 This package contains bindings for GeometricIntegrators.jl to allow it to be used with the
 JuliaDiffEq common interface. For more information on using the solvers from this
-package, see the [DifferentialEquations.jl documentation](https://juliadiffeq.github.io/DiffEqDocs.jl/latest/).
+package, see the [DifferentialEquations.jl documentation](https://juliadiffeq.github.io/DiffEqDocs.jl/dev/).
 
 ## Installation
 
@@ -15,7 +15,7 @@ segfaults on non-Linux machines, and thus GeometricIntegratorsDiffEq.jl will not
 
 ## Common API Usage
 
-This library adds the common interface to GeometricIntegrators.jl's solvers. [See the DifferentialEquations.jl documentation for details on the interface](http://docs.juliadiffeq.org/latest/index.html). Following the Lorenz example from [the ODE tutorial](http://docs.juliadiffeq.org/latest/tutorials/ode_example.html), we can solve this using `GIEuler` via the following:
+This library adds the common interface to GeometricIntegrators.jl's solvers. [See the DifferentialEquations.jl documentation for details on the interface](http://docs.juliadiffeq.org/dev/index.html). Following the Lorenz example from [the ODE tutorial](http://docs.juliadiffeq.org/dev/tutorials/ode_example.html), we can solve this using `GIEuler` via the following:
 
 ```julia
 using GeometricIntegratorsDiffEq
@@ -31,4 +31,4 @@ sol = solve(prob,GIEuler(),dt=0.1)
 using Plots; plot(sol,vars=(1,2,3))
 ```
 
-The options available in `solve` are documented [at the common solver options page](http://docs.juliadiffeq.org/latest/basics/common_solver_opts.html). The available methods are documented [at the ODE solvers page](http://docs.juliadiffeq.org/latest/solvers/ode_solve.html#GeometricIntegrators.jl-1).
+The options available in `solve` are documented [at the common solver options page](http://docs.juliadiffeq.org/dev/basics/common_solver_opts.html). The available methods are documented [at the ODE solvers page](http://docs.juliadiffeq.org/dev/solvers/ode_solve.html#GeometricIntegrators.jl-1).
