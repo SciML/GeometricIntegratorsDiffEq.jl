@@ -6,11 +6,11 @@
 
 This package contains bindings for GeometricIntegrators.jl to allow it to be used with the
 JuliaDiffEq common interface. For more information on using the solvers from this
-package, see the [DifferentialEquations.jl documentation](https://docs.sciml.ai/stable/).
+package, see the [DifferentialEquations.jl documentation](https://diffeq.sciml.ai/stable/).
 
 ## Common API Usage
 
-This library adds the common interface to GeometricIntegrators.jl's solvers. [See the DifferentialEquations.jl documentation for details on the interface](https://docs.sciml.ai/stable/index.html). Following the Lorenz example from [the ODE tutorial](https://docs.sciml.ai/stable/tutorials/ode_example/), we can solve this using `GIEuler` via the following:
+This library adds the common interface to GeometricIntegrators.jl's solvers. [See the DifferentialEquations.jl documentation for details on the interface](https://diffeq.sciml.ai/stable/index.html). Following the Lorenz example from [the ODE tutorial](https://diffeq.sciml.ai/stable/tutorials/ode_example/), we can solve this using `GIEuler` via the following:
 
 ```julia
 using GeometricIntegratorsDiffEq
@@ -26,4 +26,4 @@ sol = solve(prob,GIEuler(),dt=0.1)
 using Plots; plot(sol,vars=(1,2,3))
 ```
 
-The options available in `solve` are documented [at the common solver options page](https://docs.sciml.ai/stable/basics/common_solver_opts/). The available methods are documented [at the ODE solvers page](https://docs.sciml.ai/stable/solvers/ode_solve#GeometricIntegrators.jl-1).
+The options available in `solve` are documented [at the common solver options page](https://diffeq.sciml.ai/stable/basics/common_solver_opts/). The available methods are documented [at the ODE solvers page](https://diffeq.sciml.ai/stable/solvers/ode_solve#GeometricIntegrators.jl-1).
