@@ -13,8 +13,8 @@ function DiffEqBase.__solve(
 
     N = ceil(Int,(prob.tspan[end]-prob.tspan[1]) / dt)
 
-    isstiff = !(typeof(alg) <: Union{GIImplicitEuler,GIImplicitMidpoint,GIRadIIA2,
-                                     GIRadIIA3,GISRK3,GIGLRK})
+    isstiff = !(typeof(alg) <: Union{GIImplicitEuler,GIImplicitMidpoint,
+                                     GISRK3,GIGLRK,GIRadauIA,GIRadauIIA})
 
     if verbose
         warned = !isempty(kwargs) && check_keywords(alg, kwargs, warnlist)
@@ -71,8 +71,7 @@ function DiffEqBase.__solve(
                    (t,u,v,dv)->prob.f.f1(dv,v,u,t),
                    vec(prob.u0.x[1]),vec(prob.u0.x[2]))
     end
-    integrator = Integrator(ode,_alg,dt)
-    sol = integrate(integrator, N)
+    sol = integrate(ode, _alg, dt, N)
 
     if save_start
         start_idx = 1
@@ -102,21 +101,38 @@ function DiffEqBase.__solve(
 end
 
 function get_tableau_from_alg(alg)
-    typeof(alg) == GIEuler && (_alg = getTableauExplicitEuler())
-    typeof(alg) == GIMidpoint && (_alg = getTableauExplicitMidpoint())
-    typeof(alg) == GIHeun && (_alg = getTableauHeun())
-    typeof(alg) == GIKutta && (_alg = getTableauKutta())
-    typeof(alg) == GIERK4 && (_alg = getTableauERK4())
-    typeof(alg) == GIERK438 && (_alg = getTableauERK438())
-    typeof(alg) == GIImplicitEuler && (_alg = getTableauImplicitEuler())
-    typeof(alg) == GIImplicitMidpoint && (_alg = getTableauImplicitMidpoint())
-    typeof(alg) == GIRadIIA2 && (_alg = getTableauRadIIA2())
-    typeof(alg) == GIRadIIA3 && (_alg = getTableauRadIIA3())
-    typeof(alg) == GISRK3 && (_alg = getTableauSRK3())
-    typeof(alg) == GIGLRK && (_alg = getTableauGLRK(alg.s))
-    typeof(alg) == GISymplecticEulerA && (_alg = getTableauSymplecticEulerA())
-    typeof(alg) == GISymplecticEulerB && (_alg = getTableauSymplecticEulerB())
-    typeof(alg) == GILobattoIIIAIIIB2 && (_alg = getTableauLobattoIIIAIIIB2())
-    typeof(alg) == GILobattoIIIBIIIA2 && (_alg = getTableauLobattoIIIBIIIA2())
+    typeof(alg) == GIEuler && (_alg = TableauExplicitEuler())
+    typeof(alg) == GIMidpoint && (_alg = TableauExplicitMidpoint())
+    typeof(alg) == GIHeun2 && (_alg = TableauHeun2())
+    typeof(alg) == GIHeun3 && (_alg = TableauHeun3())
+    typeof(alg) == GIRalston2 && (_alg = TableauRalston2())
+    typeof(alg) == GIRalston3 && (_alg = TableauRalston3())
+    typeof(alg) == GIRunge && (_alg = TableauRunge())
+    typeof(alg) == GIKutta && (_alg = TableauKutta())
+    typeof(alg) == GIRK4 && (_alg = TableauRK4())
+    typeof(alg) == GIRK416 && (_alg = TableauRK416())
+    typeof(alg) == GIRK438 && (_alg = TableauRK438())
+    typeof(alg) == GISSPRK3 && (_alg = TableauSSPRK3())
+    typeof(alg) == GICrankNicolson && (_alg = TableauCrankNicolson())
+    typeof(alg) == GIKraaijevangerSpijker && (_alg = TableauKraaijevangerSpijker())
+    typeof(alg) == GIQinZhang && (_alg = TableauQinZhang())
+    typeof(alg) == GICrouzeix && (_alg = TableauCrouzeix())
+    typeof(alg) == GIImplicitEuler && (_alg = TableauImplicitEuler())
+    typeof(alg) == GIImplicitMidpoint && (_alg = TableauImplicitMidpoint())
+    typeof(alg) == GISRK3 && (_alg = TableauSRK3())
+    typeof(alg) == GIGLRK && (_alg = TableauGLRK(alg.s))
+    typeof(alg) == GIRadauIA && (_alg = TableauRadauIA(alg.s))
+    typeof(alg) == GIRadauIIA && (_alg = TableauRadauIIA(alg.s))
+    typeof(alg) == GILobattoIIIA && (_alg = TableauLobattoIIIA(alg.s))
+    typeof(alg) == GILobattoIIIB && (_alg = TableauLobattoIIIB(alg.s))
+    typeof(alg) == GILobattoIIIC && (_alg = TableauLobattoIIIC(alg.s))
+    typeof(alg) == GILobattoIIIC̄ && (_alg = TableauLobattoIIIC̄(alg.s))
+    typeof(alg) == GILobattoIIID && (_alg = TableauLobattoIIID(alg.s))
+    typeof(alg) == GILobattoIIIE && (_alg = TableauLobattoIIIE(alg.s))
+    typeof(alg) == GILobattoIIIF && (_alg = TableauLobattoIIIF(alg.s))
+    typeof(alg) == GISymplecticEulerA && (_alg = TableauSymplecticEulerA())
+    typeof(alg) == GISymplecticEulerB && (_alg = TableauSymplecticEulerB())
+    typeof(alg) == GILobattoIIIAIIIB2 && (_alg = TableauLobattoIIIAIIIB2())
+    typeof(alg) == GILobattoIIIBIIIA2 && (_alg = TableauLobattoIIIBIIIA2())
     _alg
 end

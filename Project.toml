@@ -1,7 +1,7 @@
 name = "GeometricIntegratorsDiffEq"
 uuid = "5a33fad7-5ce4-5983-9f5d-5f26ceab5c96"
 authors = ["Chris Rackauckas <accounts@chrisrackauckas.com>"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 DiffEqBase = "2b5f629d-d688-5b77-993f-72d75c75574e"
@@ -9,10 +9,10 @@ GeometricIntegrators = "dcce2d33-59f6-5b8d-9047-0defad88ae06"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [compat]
-julia = "1"
-DiffEqBase = "6"
-GeometricIntegrators = "0.2"
+DiffEqBase = "^6.49"
+GeometricIntegrators = "0.6"
 Reexport = "0.2"
+julia = "1"
 
 [extras]
 DiffEqProblemLibrary = "a077e3f3-b75c-5d7f-a0c6-6bc4c8ec64a9"
