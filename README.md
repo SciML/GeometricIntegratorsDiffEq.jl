@@ -8,6 +8,7 @@ This package contains bindings for GeometricIntegrators.jl to allow it to be use
 JuliaDiffEq common interface. For more information on using the solvers from this
 package, see the [DifferentialEquations.jl documentation](https://diffeq.sciml.ai/stable/).
 
+
 ## Common API Usage
 
 This library adds the common interface to GeometricIntegrators.jl's solvers. [See the DifferentialEquations.jl documentation for details on the interface](https://diffeq.sciml.ai/stable/index.html). Following the Lorenz example from [the ODE tutorial](https://diffeq.sciml.ai/stable/tutorials/ode_example/), we can solve this using `GIEuler` via the following:
