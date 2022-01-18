@@ -82,15 +82,9 @@ function DiffEqBase.__solve(
     end
 
     if typeof(u0) <: DiffEqBase.RecursiveArrayTools.ArrayPartition
-        _timeseries = Vector{typeof(u0.x[1])}(undef,0)
-        for i=start_idx:(sol.q.nt+1)
-            push!(_timeseries, reshape(view(sol.q, :, i-1)', length(u0.x[1])))
-        end
+        _timeseries = sol.q.d
     elseif typeof(u0) <: Union{AbstractArray}
-        _timeseries = Vector{uType}(undef,0)
-        for i=start_idx:(sol.q.nt+1)
-            push!(_timeseries, reshape(view(sol.q, :, i-1)', sizeu))
-        end
+        _timeseries = map(x->reshape(x,sizeu),sol.q.d)
     else
         _timeseries = vec(sol.q)
     end
@@ -120,7 +114,7 @@ function get_tableau_from_alg(alg)
     typeof(alg) == GIImplicitEuler && (_alg = TableauImplicitEuler())
     typeof(alg) == GIImplicitMidpoint && (_alg = TableauImplicitMidpoint())
     typeof(alg) == GISRK3 && (_alg = TableauSRK3())
-    typeof(alg) == GIGLRK && (_alg = TableauGLRK(alg.s))
+    typeof(alg) == GIGLRK && (_alg = TableauGauss(alg.s))
     typeof(alg) == GIRadauIA && (_alg = TableauRadauIA(alg.s))
     typeof(alg) == GIRadauIIA && (_alg = TableauRadauIIA(alg.s))
     typeof(alg) == GILobattoIIIA && (_alg = TableauLobattoIIIA(alg.s))
@@ -130,8 +124,8 @@ function get_tableau_from_alg(alg)
     typeof(alg) == GILobattoIIID && (_alg = TableauLobattoIIID(alg.s))
     typeof(alg) == GILobattoIIIE && (_alg = TableauLobattoIIIE(alg.s))
     typeof(alg) == GILobattoIIIF && (_alg = TableauLobattoIIIF(alg.s))
-    typeof(alg) == GISymplecticEulerA && (_alg = TableauSymplecticEulerA())
-    typeof(alg) == GISymplecticEulerB && (_alg = TableauSymplecticEulerB())
+    typeof(alg) == GISymplecticEulerA && (_alg = TableauLobattoIIIAIIIB(2))
+    typeof(alg) == GISymplecticEulerB && (_alg = TableauLobattoIIIBIIIA(2))
     typeof(alg) == GILobattoIIIAIIIB2 && (_alg = TableauLobattoIIIAIIIB2())
     typeof(alg) == GILobattoIIIBIIIA2 && (_alg = TableauLobattoIIIBIIIA2())
     _alg

@@ -51,5 +51,5 @@ prob = SecondOrderODEProblem(f2,u0,v0,(0.0,5.0))
 
 sol = solve(prob,GISymplecticEulerA(),dt=0.1)
 sol = solve(prob,GISymplecticEulerB(),dt=0.1)
-sol = solve(prob,GILobattoIIIAIIIB2(),dt=0.1)
-sol = solve(prob,GILobattoIIIBIIIA2(),dt=0.1)
+sol = solve(prob,GILobattoIIIAIIIB(2),dt=0.1)
+sol = solve(prob,GILobattoIIIBIIIA(2),dt=0.1)

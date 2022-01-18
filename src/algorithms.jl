@@ -50,5 +50,9 @@ struct GILobattoIIIF <: GeometricIntegratorAlgorithm
 end
 struct GISymplecticEulerA <: GeometricIntegratorAlgorithm end
 struct GISymplecticEulerB <: GeometricIntegratorAlgorithm end
-struct GILobattoIIIAIIIB2 <: GeometricIntegratorAlgorithm end
-struct GILobattoIIIBIIIA2 <: GeometricIntegratorAlgorithm end
+struct GILobattoIIIAIIIB <: GeometricIntegratorAlgorithm
+    n::Int
+end
+struct GILobattoIIIBIIIA <: GeometricIntegratorAlgorithm
+    n::Int
+end
