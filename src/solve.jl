@@ -126,7 +126,7 @@ function get_tableau_from_alg(alg)
     typeof(alg) == GILobattoIIIF && (_alg = TableauLobattoIIIF(alg.s))
     typeof(alg) == GISymplecticEulerA && (_alg = TableauLobattoIIIAIIIB(2))
     typeof(alg) == GISymplecticEulerB && (_alg = TableauLobattoIIIBIIIA(2))
-    typeof(alg) == GILobattoIIIAIIIB2 && (_alg = TableauLobattoIIIAIIIB2())
-    typeof(alg) == GILobattoIIIBIIIA2 && (_alg = TableauLobattoIIIBIIIA2())
+    typeof(alg) == GILobattoIIIAIIIB && (_alg = TableauLobattoIIIAIIIB(2))
+    typeof(alg) == GILobattoIIIBIIIA && (_alg = TableauLobattoIIIBIIIA(2))
     _alg
 end
