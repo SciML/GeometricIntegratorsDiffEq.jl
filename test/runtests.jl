@@ -1,7 +1,6 @@
 using GeometricIntegratorsDiffEq
 using Test
 
-using DiffEqProblemLibrary
 using GeometricIntegrators
 import ODEProblemLibrary: prob_ode_2Dlinear
 
