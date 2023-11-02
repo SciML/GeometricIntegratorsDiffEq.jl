@@ -13,12 +13,12 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
 
     N = ceil(Int, (prob.tspan[end] - prob.tspan[1]) / dt)
 
-    isstiff = !(typeof(alg) <: Union{GIImplicitEuler, GIImplicitMidpoint,
+    isstiff = !(alg isa Union{GIImplicitEuler, GIImplicitMidpoint,
                       GISRK3, GIGLRK, GIRadauIA, GIRadauIIA})
 
     if verbose
         warned = !isempty(kwargs) && check_keywords(alg, kwargs, warnlist)
-        if !(typeof(prob.f) <: DiffEqBase.AbstractParameterizedFunction) && isstiff
+        if !(prob.f isa DiffEqBase.AbstractParameterizedFunction) && isstiff
             if DiffEqBase.has_tgrad(prob.f)
                 warn("Explicit t-gradient given to this stiff solver is ignored.")
                 warned = true
@@ -37,7 +37,7 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
 
     u0 = prob.u0
 
-    if typeof(u0) <: Number
+    if u0 isa Number
         u = [u0]
     else
         if alias_u0
@@ -47,7 +47,7 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
         end
     end
 
-    if typeof(u) <: Tuple
+    if u isa Tuple
         sizeu = size(u[1])
     else
         sizeu = size(u)
@@ -55,18 +55,18 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
 
     p = prob.p
 
-    if !isinplace && typeof(u) <: AbstractArray
+    if !isinplace && u isa AbstractArray
         f! = (t, u, du) -> (du[:] = vec(prob.f(reshape(u, sizeu), p, t)); nothing)
-    elseif !(typeof(u) <: Vector{Float64})
+    elseif !(u isa Vector{Float64})
         f! = (t, u, du) -> (prob.f(reshape(du, sizeu), reshape(u, sizeu), p, t); nothing)
-    elseif typeof(prob.problem_type) <: DiffEqBase.StandardODEProblem
+    elseif prob.problem_type isa DiffEqBase.StandardODEProblem
         f! = (t, u, du) -> prob.f(du, u, p, t)
     end
 
     _alg = get_tableau_from_alg(alg)
-    if typeof(prob.problem_type) <: DiffEqBase.StandardODEProblem
+    if prob.problem_type isa DiffEqBase.StandardODEProblem
         ode = ODE(f!, vec(prob.u0))
-    elseif typeof(prob.problem_type) <: DiffEqBase.AbstractDynamicalODEProblem
+    elseif prob.problem_type isa DiffEqBase.AbstractDynamicalODEProblem
         ode = PODE((t, u, v, du) -> prob.f.f2(du, v, u, t),
                    (t, u, v, dv) -> prob.f.f1(dv, v, u, t),
                    vec(prob.u0.x[1]), vec(prob.u0.x[2]))
@@ -81,9 +81,9 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
         ts = (prob.tspan[1] + dt):dt:prob.tspan[end]
     end
 
-    if typeof(u0) <: DiffEqBase.RecursiveArrayTools.ArrayPartition
+    if u0 isa DiffEqBase.RecursiveArrayTools.ArrayPartition
         _timeseries = sol.q.d
-    elseif typeof(u0) <: Union{AbstractArray}
+    elseif u0 isa Union{AbstractArray}
         _timeseries = map(x -> reshape(x, sizeu), sol.q.d)
     else
         _timeseries = vec(sol.q)
