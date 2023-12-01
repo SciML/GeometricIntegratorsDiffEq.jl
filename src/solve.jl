@@ -1,12 +1,12 @@
 function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, isinplace},
-                            alg::AlgType,
-                            timeseries = [], ts = [], ks = [];
-                            verbose = true,
-                            save_start = true, dt = nothing,
-                            timeseries_errors = true,
-                            callback = nothing, alias_u0 = false,
-                            kwargs...) where {uType, tType, isinplace,
-                                              AlgType <: GeometricIntegratorAlgorithm}
+        alg::AlgType,
+        timeseries = [], ts = [], ks = [];
+        verbose = true,
+        save_start = true, dt = nothing,
+        timeseries_errors = true,
+        callback = nothing, alias_u0 = false,
+        kwargs...) where {uType, tType, isinplace,
+        AlgType <: GeometricIntegratorAlgorithm}
     if dt == nothing
         error("dt required for fixed timestep methods.")
     end
@@ -14,7 +14,7 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
     N = ceil(Int, (prob.tspan[end] - prob.tspan[1]) / dt)
 
     isstiff = !(alg isa Union{GIImplicitEuler, GIImplicitMidpoint,
-                      GISRK3, GIGLRK, GIRadauIA, GIRadauIIA})
+        GISRK3, GIGLRK, GIRadauIA, GIRadauIIA})
 
     if verbose
         warned = !isempty(kwargs) && check_keywords(alg, kwargs, warnlist)
@@ -68,8 +68,8 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
         ode = ODE(f!, vec(prob.u0))
     elseif prob.problem_type isa DiffEqBase.AbstractDynamicalODEProblem
         ode = PODE((t, u, v, du) -> prob.f.f2(du, v, u, t),
-                   (t, u, v, dv) -> prob.f.f1(dv, v, u, t),
-                   vec(prob.u0.x[1]), vec(prob.u0.x[2]))
+            (t, u, v, dv) -> prob.f.f1(dv, v, u, t),
+            vec(prob.u0.x[1]), vec(prob.u0.x[2]))
     end
     sol = integrate(ode, _alg, dt, N)
 
@@ -90,8 +90,8 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
     end
 
     DiffEqBase.build_solution(prob, alg, ts, _timeseries,
-                              timeseries_errors = timeseries_errors,
-                              retcode = :Success)
+        timeseries_errors = timeseries_errors,
+        retcode = :Success)
 end
 
 function get_tableau_from_alg(alg)
