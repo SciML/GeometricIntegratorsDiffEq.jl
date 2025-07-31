@@ -6,11 +6,11 @@ using Reexport
 using GeometricIntegrators
 
 const warnkeywords = (:save_idxs, :d_discontinuities, :unstable_check, :save_everystep,
-                      :save_end, :initialize_save, :adaptive, :abstol, :reltol, :dtmax,
-                      :dtmin, :force_dtmin, :internalnorm, :gamma, :beta1, :beta2,
-                      :qmax, :qmin, :qsteady_min, :qsteady_max, :qoldinit, :failfactor,
-                      :maxiters, :isoutofdomain, :unstable_check,
-                      :calck, :progress, :tstops, :saveat, :dense)
+    :save_end, :initialize_save, :adaptive, :abstol, :reltol, :dtmax,
+    :dtmin, :force_dtmin, :internalnorm, :gamma, :beta1, :beta2,
+    :qmax, :qmin, :qsteady_min, :qsteady_max, :qoldinit, :failfactor,
+    :maxiters, :isoutofdomain, :unstable_check,
+    :calck, :progress, :tstops, :saveat, :dense)
 
 function __init__()
     global warnlist = Set(warnkeywords)
