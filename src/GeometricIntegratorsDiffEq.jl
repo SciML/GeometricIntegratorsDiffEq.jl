@@ -20,12 +20,12 @@ include("algorithms.jl")
 include("solve.jl")
 
 export GeometricIntegratorAlgorithm, GIEuler, GIMidpoint, GIHeun2, GIHeun3,
-       GIRalston2, GIRalston3, GIRunge, GIKutta, GIRK4, GIRK416, GIRK438, GISSPRK3,
-       GICrankNicolson, GIKraaijevangerSpijker, GIQinZhang, GICrouzeix,
-       GIImplicitEuler, GIImplicitMidpoint, GISRK3,
-       GIGLRK, GILobattoIIIA, GILobattoIIIB, GILobattoIIIC, GILobattoIIIC̄,
-       GILobattoIIID, GILobattoIIIE, GILobattoIIIF, GIRadauIA, GIRadauIIA,
-       GISymplecticEulerA, GISymplecticEulerB, GILobattoIIIAIIIB,
-       GILobattoIIIBIIIA
+    GIRalston2, GIRalston3, GIRunge, GIKutta, GIRK4, GIRK416, GIRK438, GISSPRK3,
+    GICrankNicolson, GIKraaijevangerSpijker, GIQinZhang, GICrouzeix,
+    GIImplicitEuler, GIImplicitMidpoint, GISRK3,
+    GIGLRK, GILobattoIIIA, GILobattoIIIB, GILobattoIIIC, GILobattoIIIC̄,
+    GILobattoIIID, GILobattoIIIE, GILobattoIIIF, GIRadauIA, GIRadauIIA,
+    GISymplecticEulerA, GISymplecticEulerB, GILobattoIIIAIIIB,
+    GILobattoIIIBIIIA
 
 end # module
