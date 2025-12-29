@@ -2,6 +2,7 @@ module GeometricIntegratorsDiffEq
 
 using Reexport
 @reexport using DiffEqBase
+using SciMLBase: ReturnCode
 
 using GeometricIntegrators
 
