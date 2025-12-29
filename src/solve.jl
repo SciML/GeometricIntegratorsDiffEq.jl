@@ -1,17 +1,15 @@
 function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, isinplace},
         alg::AlgType,
-        timeseries = [], ts = [], ks = [];
+        timeseries = nothing, ts = nothing, ks = nothing;
         verbose = true,
         save_start = true, dt = nothing,
         timeseries_errors = true,
         callback = nothing, alias_u0 = false,
         kwargs...) where {uType, tType, isinplace,
         AlgType <: GeometricIntegratorAlgorithm}
-    if dt == nothing
+    if dt === nothing
         error("dt required for fixed timestep methods.")
     end
-
-    N = ceil(Int, (prob.tspan[end] - prob.tspan[1]) / dt)
 
     isstiff = !(alg isa Union{GIImplicitEuler, GIImplicitMidpoint,
         GISRK3, GIGLRK, GIRadauIA, GIRadauIIA})
@@ -20,18 +18,18 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
         warned = !isempty(kwargs) && check_keywords(alg, kwargs, warnlist)
         if !(prob.f isa DiffEqBase.AbstractParameterizedFunction) && isstiff
             if DiffEqBase.has_tgrad(prob.f)
-                warn("Explicit t-gradient given to this stiff solver is ignored.")
+                @warn "Explicit t-gradient given to this stiff solver is ignored."
                 warned = true
             end
             if DiffEqBase.has_jac(prob.f)
-                warn("Explicit Jacobian given to this stiff solver is ignored.")
+                @warn "Explicit Jacobian given to this stiff solver is ignored."
                 warned = true
             end
         end
         warned && warn_compat()
     end
 
-    if callback != nothing
+    if callback !== nothing
         error("GeometricIntegrators is not compatible with callbacks.")
     end
 
@@ -55,78 +53,125 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
 
     p = prob.p
 
-    if !isinplace && u isa AbstractArray
-        f! = (t, u, du) -> (du[:] = vec(prob.f(reshape(u, sizeu), p, t)); nothing)
-    elseif !(u isa Vector{Float64})
-        f! = (t, u, du) -> (prob.f(reshape(du, sizeu), reshape(u, sizeu), p, t); nothing)
-    elseif prob.problem_type isa DiffEqBase.StandardODEProblem
-        f! = (t, u, du) -> prob.f(du, u, p, t)
-    end
+    _alg = get_method_from_alg(alg)
+    needs_solver = requires_newton_solver(alg)
 
-    _alg = get_tableau_from_alg(alg)
     if prob.problem_type isa DiffEqBase.StandardODEProblem
-        ode = ODE(f!, vec(prob.u0))
+        # Create function wrapper for GeometricIntegrators API
+        # GeometricIntegrators expects: v(v, t, q, params)
+        # DiffEqBase provides: f(du, u, p, t) for inplace or f(u, p, t) for out-of-place
+        if !isinplace && u isa AbstractArray
+            v! = (v, t, q, params) -> (v .= vec(prob.f(reshape(q, sizeu), p, t)); nothing)
+        elseif !(u isa Vector{Float64})
+            v! = (v, t, q,
+                params) -> (prob.f(reshape(v, sizeu), reshape(q, sizeu), p, t); nothing)
+        else
+            v! = (v, t, q, params) -> prob.f(v, q, p, t)
+        end
+
+        ode = GeometricIntegrators.ODEProblem(v!, prob.tspan, dt, vec(prob.u0))
+        if needs_solver
+            sol = integrate(ode, _alg; solver = Newton())
+        else
+            sol = integrate(ode, _alg)
+        end
+
+        if save_start
+            start_idx = 1
+            ts = prob.tspan[1]:dt:prob.tspan[end]
+        else
+            start_idx = 2
+            ts = (prob.tspan[1] + dt):dt:prob.tspan[end]
+        end
+
+        if u0 isa DiffEqBase.RecursiveArrayTools.ArrayPartition
+            _timeseries = [copy(vec(q)) for q in sol.q]
+        elseif u0 isa AbstractArray
+            _timeseries = [reshape(copy(vec(q)), sizeu) for q in sol.q]
+        else
+            _timeseries = [q[1] for q in sol.q]
+        end
+
     elseif prob.problem_type isa DiffEqBase.AbstractDynamicalODEProblem
-        ode = PODE((t, u, v, du) -> prob.f.f2(du, v, u, t),
-            (t, u, v, dv) -> prob.f.f1(dv, v, u, t),
-            vec(prob.u0.x[1]), vec(prob.u0.x[2]))
-    end
-    sol = integrate(ode, _alg, dt, N)
+        # For second order / partitioned problems
+        # PODE expects: v(v, t, q, p, params), f(f, t, q, p, params)
+        # DiffEqBase SecondOrderODEProblem has f.f1 and f.f2:
+        # For inplace: f.f1(dv, v, u, p, t) - for acceleration (dv/dt = f(v, u))
+        # For out-of-place: f.f1(v, u, p, t) returns dv
 
-    if save_start
-        start_idx = 1
-        ts = prob.tspan[1]:dt:prob.tspan[end]
-    else
-        start_idx = 2
-        ts = (prob.tspan[1] + dt):dt:prob.tspan[end]
+        v! = (v, t, q, p_state, params) -> (v .= p_state)  # dq/dt = p
+
+        # Handle both inplace and out-of-place problems
+        if isinplace
+            f! = (f_out, t, q, p_state,
+                params) -> (prob.f.f1.f(f_out, p_state, q, p, t); nothing)  # dp/dt = f1(p, q)
+        else
+            f! = (f_out, t, q, p_state,
+                params) -> (f_out .= prob.f.f1.f(p_state, q, p, t); nothing)
+        end
+
+        pode = GeometricIntegrators.PODEProblem(
+            v!, f!, prob.tspan, dt, vec(prob.u0.x[1]), vec(prob.u0.x[2]))
+        if needs_solver
+            sol = integrate(pode, _alg; solver = Newton())
+        else
+            sol = integrate(pode, _alg)
+        end
+
+        if save_start
+            start_idx = 1
+            ts = prob.tspan[1]:dt:prob.tspan[end]
+        else
+            start_idx = 2
+            ts = (prob.tspan[1] + dt):dt:prob.tspan[end]
+        end
+
+        _timeseries = [DiffEqBase.RecursiveArrayTools.ArrayPartition(copy(vec(q)), copy(vec(p)))
+                       for (q, p) in zip(sol.q, sol.p)]
     end
 
-    if u0 isa DiffEqBase.RecursiveArrayTools.ArrayPartition
-        _timeseries = sol.q.d
-    elseif u0 isa Union{AbstractArray}
-        _timeseries = map(x -> reshape(x, sizeu), sol.q.d)
-    else
-        _timeseries = vec(sol.q)
-    end
-
-    DiffEqBase.build_solution(prob, alg, ts, _timeseries,
+    DiffEqBase.build_solution(prob, alg, ts, _timeseries[start_idx:end],
         timeseries_errors = timeseries_errors,
-        retcode = :Success)
+        retcode = ReturnCode.Success)
 end
 
-function get_tableau_from_alg(alg)
-    typeof(alg) == GIEuler && (_alg = TableauExplicitEuler())
-    typeof(alg) == GIMidpoint && (_alg = TableauExplicitMidpoint())
-    typeof(alg) == GIHeun2 && (_alg = TableauHeun2())
-    typeof(alg) == GIHeun3 && (_alg = TableauHeun3())
-    typeof(alg) == GIRalston2 && (_alg = TableauRalston2())
-    typeof(alg) == GIRalston3 && (_alg = TableauRalston3())
-    typeof(alg) == GIRunge && (_alg = TableauRunge())
-    typeof(alg) == GIKutta && (_alg = TableauKutta())
-    typeof(alg) == GIRK4 && (_alg = TableauRK4())
-    typeof(alg) == GIRK416 && (_alg = TableauRK416())
-    typeof(alg) == GIRK438 && (_alg = TableauRK438())
-    typeof(alg) == GISSPRK3 && (_alg = TableauSSPRK3())
-    typeof(alg) == GICrankNicolson && (_alg = TableauCrankNicolson())
-    typeof(alg) == GIKraaijevangerSpijker && (_alg = TableauKraaijevangerSpijker())
-    typeof(alg) == GIQinZhang && (_alg = TableauQinZhang())
-    typeof(alg) == GICrouzeix && (_alg = TableauCrouzeix())
-    typeof(alg) == GIImplicitEuler && (_alg = TableauImplicitEuler())
-    typeof(alg) == GIImplicitMidpoint && (_alg = TableauImplicitMidpoint())
-    typeof(alg) == GISRK3 && (_alg = TableauSRK3())
-    typeof(alg) == GIGLRK && (_alg = TableauGauss(alg.s))
-    typeof(alg) == GIRadauIA && (_alg = TableauRadauIA(alg.s))
-    typeof(alg) == GIRadauIIA && (_alg = TableauRadauIIA(alg.s))
-    typeof(alg) == GILobattoIIIA && (_alg = TableauLobattoIIIA(alg.s))
-    typeof(alg) == GILobattoIIIB && (_alg = TableauLobattoIIIB(alg.s))
-    typeof(alg) == GILobattoIIIC && (_alg = TableauLobattoIIIC(alg.s))
-    typeof(alg) == GILobattoIIIC̄ && (_alg = TableauLobattoIIIC̄(alg.s))
-    typeof(alg) == GILobattoIIID && (_alg = TableauLobattoIIID(alg.s))
-    typeof(alg) == GILobattoIIIE && (_alg = TableauLobattoIIIE(alg.s))
-    typeof(alg) == GILobattoIIIF && (_alg = TableauLobattoIIIF(alg.s))
-    typeof(alg) == GISymplecticEulerA && (_alg = TableauLobattoIIIAIIIB(2))
-    typeof(alg) == GISymplecticEulerB && (_alg = TableauLobattoIIIBIIIA(2))
-    typeof(alg) == GILobattoIIIAIIIB && (_alg = TableauLobattoIIIAIIIB(2))
-    typeof(alg) == GILobattoIIIBIIIA && (_alg = TableauLobattoIIIBIIIA(2))
-    _alg
+function requires_newton_solver(alg)
+    # These methods require a Newton solver for implicit stages
+    return alg isa Union{GIRadauIA, GIRadauIIA, GILobattoIIIA, GILobattoIIIC,
+        GILobattoIIIC̄, GILobattoIIID, GILobattoIIIE, GILobattoIIIF}
 end
+
+# Use multiple dispatch for better type inference and cleaner code
+get_method_from_alg(::GIEuler) = ExplicitEuler()
+get_method_from_alg(::GIMidpoint) = ExplicitMidpoint()
+get_method_from_alg(::GIHeun2) = Heun2()
+get_method_from_alg(::GIHeun3) = Heun3()
+get_method_from_alg(::GIRalston2) = Ralston2()
+get_method_from_alg(::GIRalston3) = Ralston3()
+get_method_from_alg(::GIRunge) = Runge2()
+get_method_from_alg(::GIKutta) = Kutta3()
+get_method_from_alg(::GIRK4) = RK4()
+get_method_from_alg(::GIRK416) = RK416()
+get_method_from_alg(::GIRK438) = RK438()
+get_method_from_alg(::GISSPRK3) = SSPRK3()
+get_method_from_alg(::GICrankNicolson) = CrankNicolson()
+get_method_from_alg(::GIKraaijevangerSpijker) = KraaijevangerSpijker()
+get_method_from_alg(::GIQinZhang) = QinZhang()
+get_method_from_alg(::GICrouzeix) = Crouzeix()
+get_method_from_alg(::GIImplicitEuler) = ImplicitEuler()
+get_method_from_alg(::GIImplicitMidpoint) = ImplicitMidpoint()
+get_method_from_alg(::GISRK3) = SRK3()
+get_method_from_alg(alg::GIGLRK) = Gauss(alg.s)
+get_method_from_alg(alg::GIRadauIA) = RadauIA(alg.s)
+get_method_from_alg(alg::GIRadauIIA) = RadauIIA(alg.s)
+get_method_from_alg(alg::GILobattoIIIA) = LobattoIIIA(alg.s)
+get_method_from_alg(alg::GILobattoIIIB) = LobattoIIIB(alg.s)
+get_method_from_alg(alg::GILobattoIIIC) = LobattoIIIC(alg.s)
+get_method_from_alg(alg::GILobattoIIIC̄) = LobattoIIIC(alg.s)  # LobattoIIIC̄ not available as standalone
+get_method_from_alg(alg::GILobattoIIID) = LobattoIIID(alg.s)
+get_method_from_alg(alg::GILobattoIIIE) = LobattoIIIE(alg.s)
+get_method_from_alg(alg::GILobattoIIIF) = LobattoIIIF(alg.s)
+get_method_from_alg(::GISymplecticEulerA) = SymplecticEulerA()
+get_method_from_alg(::GISymplecticEulerB) = SymplecticEulerB()
+get_method_from_alg(alg::GILobattoIIIAIIIB) = LobattoIIIAIIIB(alg.n)
+get_method_from_alg(alg::GILobattoIIIBIIIA) = LobattoIIIBIIIA(alg.n)
