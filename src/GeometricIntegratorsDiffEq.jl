@@ -1,8 +1,9 @@
 module GeometricIntegratorsDiffEq
 
-using Reexport
+using Reexport: @reexport
 @reexport using DiffEqBase
 
+using DiffEqBase: check_keywords, warn_compat
 using GeometricIntegrators
 
 const warnkeywords = (:save_idxs, :d_discontinuities, :unstable_check, :save_everystep,

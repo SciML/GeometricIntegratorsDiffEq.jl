@@ -1,8 +1,16 @@
 using GeometricIntegratorsDiffEq
 using Test
+using ExplicitImports
 
-using GeometricIntegrators
+using RecursiveArrayTools: ArrayPartition
 import ODEProblemLibrary: prob_ode_2Dlinear
+
+@testset "Explicit Imports" begin
+    @test check_no_stale_explicit_imports(GeometricIntegratorsDiffEq) === nothing
+    # Note: check_no_implicit_imports is skipped because GeometricIntegrators
+    # exports vary between versions (0.6.x vs 0.9.x) and we intentionally use
+    # `using GeometricIntegrators` to get all exports from the installed version.
+end
 
 prob = prob_ode_2Dlinear
 
