@@ -83,8 +83,10 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
 
     if u0 isa DiffEqBase.RecursiveArrayTools.ArrayPartition
         _timeseries = sol.q.d
-    elseif u0 isa Union{AbstractArray}
-        _timeseries = map(x -> reshape(x, sizeu), sol.q.d)
+    elseif u0 isa AbstractArray
+        # sol.q.d is a matrix where rows are state variables and columns are time points
+        # Extract each column, skip first column if not saving start
+        _timeseries = [reshape(view(sol.q.d, :, i), sizeu) for i in start_idx:size(sol.q.d, 2)]
     else
         _timeseries = vec(sol.q)
     end
@@ -94,39 +96,37 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
         retcode = :Success)
 end
 
-function get_tableau_from_alg(alg)
-    typeof(alg) == GIEuler && (_alg = TableauExplicitEuler())
-    typeof(alg) == GIMidpoint && (_alg = TableauExplicitMidpoint())
-    typeof(alg) == GIHeun2 && (_alg = TableauHeun2())
-    typeof(alg) == GIHeun3 && (_alg = TableauHeun3())
-    typeof(alg) == GIRalston2 && (_alg = TableauRalston2())
-    typeof(alg) == GIRalston3 && (_alg = TableauRalston3())
-    typeof(alg) == GIRunge && (_alg = TableauRunge())
-    typeof(alg) == GIKutta && (_alg = TableauKutta())
-    typeof(alg) == GIRK4 && (_alg = TableauRK4())
-    typeof(alg) == GIRK416 && (_alg = TableauRK416())
-    typeof(alg) == GIRK438 && (_alg = TableauRK438())
-    typeof(alg) == GISSPRK3 && (_alg = TableauSSPRK3())
-    typeof(alg) == GICrankNicolson && (_alg = TableauCrankNicolson())
-    typeof(alg) == GIKraaijevangerSpijker && (_alg = TableauKraaijevangerSpijker())
-    typeof(alg) == GIQinZhang && (_alg = TableauQinZhang())
-    typeof(alg) == GICrouzeix && (_alg = TableauCrouzeix())
-    typeof(alg) == GIImplicitEuler && (_alg = TableauImplicitEuler())
-    typeof(alg) == GIImplicitMidpoint && (_alg = TableauImplicitMidpoint())
-    typeof(alg) == GISRK3 && (_alg = TableauSRK3())
-    typeof(alg) == GIGLRK && (_alg = TableauGauss(alg.s))
-    typeof(alg) == GIRadauIA && (_alg = TableauRadauIA(alg.s))
-    typeof(alg) == GIRadauIIA && (_alg = TableauRadauIIA(alg.s))
-    typeof(alg) == GILobattoIIIA && (_alg = TableauLobattoIIIA(alg.s))
-    typeof(alg) == GILobattoIIIB && (_alg = TableauLobattoIIIB(alg.s))
-    typeof(alg) == GILobattoIIIC && (_alg = TableauLobattoIIIC(alg.s))
-    typeof(alg) == GILobattoIIIC̄ && (_alg = TableauLobattoIIIC̄(alg.s))
-    typeof(alg) == GILobattoIIID && (_alg = TableauLobattoIIID(alg.s))
-    typeof(alg) == GILobattoIIIE && (_alg = TableauLobattoIIIE(alg.s))
-    typeof(alg) == GILobattoIIIF && (_alg = TableauLobattoIIIF(alg.s))
-    typeof(alg) == GISymplecticEulerA && (_alg = TableauLobattoIIIAIIIB(2))
-    typeof(alg) == GISymplecticEulerB && (_alg = TableauLobattoIIIBIIIA(2))
-    typeof(alg) == GILobattoIIIAIIIB && (_alg = TableauLobattoIIIAIIIB(2))
-    typeof(alg) == GILobattoIIIBIIIA && (_alg = TableauLobattoIIIBIIIA(2))
-    _alg
-end
+# Use dispatch instead of sequential typeof checks for better performance
+get_tableau_from_alg(::GIEuler) = TableauExplicitEuler()
+get_tableau_from_alg(::GIMidpoint) = TableauExplicitMidpoint()
+get_tableau_from_alg(::GIHeun2) = TableauHeun2()
+get_tableau_from_alg(::GIHeun3) = TableauHeun3()
+get_tableau_from_alg(::GIRalston2) = TableauRalston2()
+get_tableau_from_alg(::GIRalston3) = TableauRalston3()
+get_tableau_from_alg(::GIRunge) = TableauRunge()
+get_tableau_from_alg(::GIKutta) = TableauKutta()
+get_tableau_from_alg(::GIRK4) = TableauRK4()
+get_tableau_from_alg(::GIRK416) = TableauRK416()
+get_tableau_from_alg(::GIRK438) = TableauRK438()
+get_tableau_from_alg(::GISSPRK3) = TableauSSPRK3()
+get_tableau_from_alg(::GICrankNicolson) = TableauCrankNicolson()
+get_tableau_from_alg(::GIKraaijevangerSpijker) = TableauKraaijevangerSpijker()
+get_tableau_from_alg(::GIQinZhang) = TableauQinZhang()
+get_tableau_from_alg(::GICrouzeix) = TableauCrouzeix()
+get_tableau_from_alg(::GIImplicitEuler) = TableauImplicitEuler()
+get_tableau_from_alg(::GIImplicitMidpoint) = TableauImplicitMidpoint()
+get_tableau_from_alg(::GISRK3) = TableauSRK3()
+get_tableau_from_alg(alg::GIGLRK) = TableauGLRK(alg.s)
+get_tableau_from_alg(alg::GIRadauIA) = TableauRadauIA(alg.s)
+get_tableau_from_alg(alg::GIRadauIIA) = TableauRadauIIA(alg.s)
+get_tableau_from_alg(alg::GILobattoIIIA) = TableauLobattoIIIA(alg.s)
+get_tableau_from_alg(alg::GILobattoIIIB) = TableauLobattoIIIB(alg.s)
+get_tableau_from_alg(alg::GILobattoIIIC) = TableauLobattoIIIC(alg.s)
+get_tableau_from_alg(alg::GILobattoIIIC̄) = TableauLobattoIIIC̄(alg.s)
+get_tableau_from_alg(alg::GILobattoIIID) = TableauLobattoIIID(alg.s)
+get_tableau_from_alg(alg::GILobattoIIIE) = TableauLobattoIIIE(alg.s)
+get_tableau_from_alg(alg::GILobattoIIIF) = TableauLobattoIIIF(alg.s)
+get_tableau_from_alg(::GISymplecticEulerA) = TableauSymplecticEulerA()
+get_tableau_from_alg(::GISymplecticEulerB) = TableauSymplecticEulerB()
+get_tableau_from_alg(::GILobattoIIIAIIIB) = TableauLobattoIIIAIIIB2()
+get_tableau_from_alg(::GILobattoIIIBIIIA) = TableauLobattoIIIBIIIA2()
