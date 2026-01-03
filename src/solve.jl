@@ -135,11 +135,18 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
         retcode = ReturnCode.Success)
 end
 
-function requires_newton_solver(alg)
-    # These methods require a Newton solver for implicit stages
-    return alg isa Union{GIRadauIA, GIRadauIIA, GILobattoIIIA, GILobattoIIIC,
-        GILobattoIIIC̄, GILobattoIIID, GILobattoIIIE, GILobattoIIIF}
-end
+# Use multiple dispatch for requires_newton_solver - matches get_method_from_alg pattern
+# Algorithms that require a Newton solver for implicit stages
+requires_newton_solver(::GIRadauIA) = true
+requires_newton_solver(::GIRadauIIA) = true
+requires_newton_solver(::GILobattoIIIA) = true
+requires_newton_solver(::GILobattoIIIC) = true
+requires_newton_solver(::GILobattoIIIC̄) = true
+requires_newton_solver(::GILobattoIIID) = true
+requires_newton_solver(::GILobattoIIIE) = true
+requires_newton_solver(::GILobattoIIIF) = true
+# Default: no Newton solver required
+requires_newton_solver(::GeometricIntegratorAlgorithm) = false
 
 # Use multiple dispatch for better type inference and cleaner code
 get_method_from_alg(::GIEuler) = ExplicitEuler()

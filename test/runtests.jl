@@ -90,3 +90,8 @@ end # testset GeometricIntegratorsDiffEq
 if get(ENV, "GROUP", "All") == "All" || get(ENV, "GROUP", "") == "Nopre"
     include("alloc_tests.jl")
 end
+
+# Run JET static analysis tests
+if get(ENV, "GROUP", "All") == "All" || get(ENV, "GROUP", "") == "JET"
+    include("jet_tests.jl")
+end
