@@ -1,18 +1,26 @@
-function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, isinplace},
+function DiffEqBase.__solve(
+        prob::DiffEqBase.AbstractODEProblem{uType, tType, isinplace},
         alg::AlgType,
         timeseries = nothing, ts = nothing, ks = nothing;
         verbose = true,
         save_start = true, dt = nothing,
         timeseries_errors = true,
         callback = nothing, alias_u0 = false,
-        kwargs...) where {uType, tType, isinplace,
-        AlgType <: GeometricIntegratorAlgorithm}
+        kwargs...
+    ) where {
+        uType, tType, isinplace,
+        AlgType <: GeometricIntegratorAlgorithm,
+    }
     if dt === nothing
         error("dt required for fixed timestep methods.")
     end
 
-    isstiff = !(alg isa Union{GIImplicitEuler, GIImplicitMidpoint,
-        GISRK3, GIGLRK, GIRadauIA, GIRadauIIA})
+    isstiff = !(
+        alg isa Union{
+            GIImplicitEuler, GIImplicitMidpoint,
+            GISRK3, GIGLRK, GIRadauIA, GIRadauIIA,
+        }
+    )
 
     if verbose
         warned = !isempty(kwargs) && check_keywords(alg, kwargs, warnlist)
@@ -63,8 +71,10 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
         if !isinplace && u isa AbstractArray
             v! = (v, t, q, params) -> (v .= vec(prob.f(reshape(q, sizeu), p, t)); nothing)
         elseif !(u isa Vector{Float64})
-            v! = (v, t, q,
-                params) -> (prob.f(reshape(v, sizeu), reshape(q, sizeu), p, t); nothing)
+            v! = (
+                v, t, q,
+                params,
+            ) -> (prob.f(reshape(v, sizeu), reshape(q, sizeu), p, t); nothing)
         else
             v! = (v, t, q, params) -> prob.f(v, q, p, t)
         end
@@ -103,15 +113,20 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
 
         # Handle both inplace and out-of-place problems
         if isinplace
-            f! = (f_out, t, q, p_state,
-                params) -> (prob.f.f1.f(f_out, p_state, q, p, t); nothing)  # dp/dt = f1(p, q)
+            f! = (
+                f_out, t, q, p_state,
+                params,
+            ) -> (prob.f.f1.f(f_out, p_state, q, p, t); nothing)  # dp/dt = f1(p, q)
         else
-            f! = (f_out, t, q, p_state,
-                params) -> (f_out .= prob.f.f1.f(p_state, q, p, t); nothing)
+            f! = (
+                f_out, t, q, p_state,
+                params,
+            ) -> (f_out .= prob.f.f1.f(p_state, q, p, t); nothing)
         end
 
         pode = GeometricIntegrators.PODEProblem(
-            v!, f!, prob.tspan, dt, vec(prob.u0.x[1]), vec(prob.u0.x[2]))
+            v!, f!, prob.tspan, dt, vec(prob.u0.x[1]), vec(prob.u0.x[2])
+        )
         if needs_solver
             sol = integrate(pode, _alg; solver = Newton())
         else
@@ -126,13 +141,17 @@ function DiffEqBase.__solve(prob::DiffEqBase.AbstractODEProblem{uType, tType, is
             ts = (prob.tspan[1] + dt):dt:prob.tspan[end]
         end
 
-        _timeseries = [DiffEqBase.RecursiveArrayTools.ArrayPartition(copy(vec(q)), copy(vec(p)))
-                       for (q, p) in zip(sol.q, sol.p)]
+        _timeseries = [
+            DiffEqBase.RecursiveArrayTools.ArrayPartition(copy(vec(q)), copy(vec(p)))
+                for (q, p) in zip(sol.q, sol.p)
+        ]
     end
 
-    DiffEqBase.build_solution(prob, alg, ts, _timeseries[start_idx:end],
+    return DiffEqBase.build_solution(
+        prob, alg, ts, _timeseries[start_idx:end],
         timeseries_errors = timeseries_errors,
-        retcode = ReturnCode.Success)
+        retcode = ReturnCode.Success
+    )
 end
 
 # Use multiple dispatch for requires_newton_solver - matches get_method_from_alg pattern
