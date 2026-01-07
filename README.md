@@ -28,3 +28,4 @@ using Plots; plot(sol,vars=(1,2,3))
 ```
 
 The options available in `solve` are documented [at the common solver options page](https://diffeq.sciml.ai/stable/basics/common_solver_opts/). The available methods are documented [at the ODE solvers page](https://diffeq.sciml.ai/stable/solvers/ode_solve#GeometricIntegrators.jl-1).
+
