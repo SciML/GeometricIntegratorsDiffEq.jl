@@ -1,10 +1,16 @@
 module GeometricIntegratorsDiffEq
 
-using Reexport
-@reexport using DiffEqBase
-using SciMLBase: ReturnCode
+using Reexport: Reexport, @reexport
+@reexport using DiffEqBase: DiffEqBase
+using SciMLBase: SciMLBase, ReturnCode, check_keywords, isinplace, warn_compat
 
-using GeometricIntegrators
+using GeometricIntegrators: GeometricIntegrators, CrankNicolson, Crouzeix,
+    ExplicitEuler, ExplicitMidpoint, Gauss, Heun2, Heun3, ImplicitEuler,
+    ImplicitMidpoint, KraaijevangerSpijker, Kutta3, LobattoIIIA,
+    LobattoIIIAIIIB, LobattoIIIB, LobattoIIIBIIIA, LobattoIIIC, LobattoIIID,
+    LobattoIIIE, LobattoIIIF, Newton, QinZhang, RK4, RK416, RK438, RadauIA,
+    RadauIIA, Ralston2, Ralston3, Runge2, SRK3, SSPRK3, SymplecticEulerA,
+    SymplecticEulerB, integrate
 
 const warnkeywords = (
     :save_idxs, :d_discontinuities, :unstable_check, :save_everystep,

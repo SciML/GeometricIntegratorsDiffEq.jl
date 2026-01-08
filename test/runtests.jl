@@ -2,6 +2,7 @@ using GeometricIntegratorsDiffEq
 using Test
 
 using GeometricIntegrators
+using DiffEqBase: solve, ReturnCode, SecondOrderODEProblem
 import ODEProblemLibrary: prob_ode_2Dlinear
 
 @testset "GeometricIntegratorsDiffEq" begin
@@ -85,6 +86,11 @@ import ODEProblemLibrary: prob_ode_2Dlinear
         @test sol.retcode == ReturnCode.Success
     end
 end # testset GeometricIntegratorsDiffEq
+
+# Run ExplicitImports tests
+if get(ENV, "GROUP", "All") == "All" || get(ENV, "GROUP", "") == "ExplicitImports"
+    include("explicit_imports_test.jl")
+end
 
 # Run allocation tests if AllocCheck is available
 if get(ENV, "GROUP", "All") == "All" || get(ENV, "GROUP", "") == "Nopre"

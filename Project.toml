@@ -1,7 +1,7 @@
 name = "GeometricIntegratorsDiffEq"
 uuid = "5a33fad7-5ce4-5983-9f5d-5f26ceab5c96"
-authors = ["Chris Rackauckas <accounts@chrisrackauckas.com>"]
 version = "1.0.0"
+authors = ["Chris Rackauckas <accounts@chrisrackauckas.com>"]
 
 [deps]
 DiffEqBase = "2b5f629d-d688-5b77-993f-72d75c75574e"
@@ -11,6 +11,7 @@ SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
 
 [compat]
 DiffEqBase = "6.62"
+ExplicitImports = "1.14.0"
 GeometricIntegrators = "0.15"
 JET = "0.9, 0.10, 0.11"
 Reexport = "0.2, 1"
@@ -19,9 +20,10 @@ julia = "1.10"
 
 [extras]
 AllocCheck = "9b6a8646-10ed-4001-bbdc-1d2f46dfbb1a"
+ExplicitImports = "7d51a73a-1435-4ff3-83d9-f097790105c7"
 JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
 ODEProblemLibrary = "fdc4e326-1af4-4b90-96e7-779fcce2daa5"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["AllocCheck", "JET", "ODEProblemLibrary", "Test"]
+test = ["AllocCheck", "ExplicitImports", "JET", "ODEProblemLibrary", "Test"]
