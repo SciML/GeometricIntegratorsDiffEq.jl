@@ -2,7 +2,7 @@ module GeometricIntegratorsDiffEq
 
 using Reexport: Reexport, @reexport
 @reexport using DiffEqBase: DiffEqBase
-using SciMLBase: SciMLBase, ReturnCode, check_keywords, isinplace, warn_compat
+using SciMLBase: SciMLBase, ReturnCode, check_keywords, warn_compat
 
 using GeometricIntegrators: GeometricIntegrators, CrankNicolson, Crouzeix,
     ExplicitEuler, ExplicitMidpoint, Gauss, Heun2, Heun3, ImplicitEuler,
