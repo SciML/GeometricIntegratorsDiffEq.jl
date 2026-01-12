@@ -1,0 +1,9 @@
+[deps]
+AllocCheck = "9b6a8646-10ed-4001-bbdc-1d2f46dfbb1a"
+GeometricIntegratorsDiffEq = "5a33fad7-5ce4-5983-9f5d-5f26ceab5c96"
+JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[compat]
+AllocCheck = "0.1, 0.2"
+JET = "0.9, 0.10, 0.11"
