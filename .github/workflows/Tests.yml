@@ -25,6 +25,9 @@ jobs:
         group:
           - "Core"
           - "NoPre"
+        exclude:
+          - version: "pre"
+            group: "NoPre"
     uses: "SciML/.github/.github/workflows/tests.yml@v1"
     with:
       julia-version: "${{ matrix.version }}"
