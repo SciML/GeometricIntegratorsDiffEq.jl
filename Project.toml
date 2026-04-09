@@ -1,6 +1,6 @@
 name = "GeometricIntegratorsDiffEq"
 uuid = "5a33fad7-5ce4-5983-9f5d-5f26ceab5c96"
-version = "1.1.0"
+version = "1.2.0"
 authors = ["Chris Rackauckas <accounts@chrisrackauckas.com>"]
 
 [deps]
@@ -14,7 +14,7 @@ DiffEqBase = "6.62"
 ExplicitImports = "1.14.0"
 GeometricIntegrators = "0.15, 0.16"
 Reexport = "0.2, 1"
-SciMLBase = "2"
+SciMLBase = "2, 3"
 julia = "1.10"
 
 [extras]
