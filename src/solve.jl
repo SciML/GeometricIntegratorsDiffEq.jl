@@ -15,6 +15,10 @@ function DiffEqBase.__solve(
         error("dt required for fixed timestep methods.")
     end
 
+    # DiffEqBase v7 passes `verbose` as a `DEVerbosity` object instead of a Bool.
+    # Treat anything that is not literally `false` as "show warnings".
+    verbose_bool = verbose !== false
+
     isstiff = !(
         alg isa Union{
             GIImplicitEuler, GIImplicitMidpoint,
@@ -22,7 +26,7 @@ function DiffEqBase.__solve(
         }
     )
 
-    if verbose
+    if verbose_bool
         warned = !isempty(kwargs) && check_keywords(alg, kwargs, warnlist)
         if !(prob.f isa DiffEqBase.AbstractParameterizedFunction) && isstiff
             if DiffEqBase.has_tgrad(prob.f)
@@ -68,15 +72,20 @@ function DiffEqBase.__solve(
         # Create function wrapper for GeometricIntegrators API
         # GeometricIntegrators expects: v(v, t, q, params)
         # DiffEqBase provides: f(du, u, p, t) for inplace or f(u, p, t) for out-of-place
+        # SciMLBase v3's default AutoSpecialize wraps f in a FunctionWrappersWrapper that
+        # only accepts the exact argument types captured at problem construction (e.g.
+        # `Matrix{Float64}`), so passing a `Base.ReshapedArray` to it errors. Unwrap the
+        # underlying user-defined function before invoking it.
+        raw_f = SciMLBase.unwrapped_f(prob.f.f)
         if !isinplace && u isa AbstractArray
-            v! = (v, t, q, params) -> (v .= vec(prob.f(reshape(q, sizeu), p, t)); nothing)
+            v! = (v, t, q, params) -> (v .= vec(raw_f(reshape(q, sizeu), p, t)); nothing)
         elseif !(u isa Vector{Float64})
             v! = (
                 v, t, q,
                 params,
-            ) -> (prob.f(reshape(v, sizeu), reshape(q, sizeu), p, t); nothing)
+            ) -> (raw_f(reshape(v, sizeu), reshape(q, sizeu), p, t); nothing)
         else
-            v! = (v, t, q, params) -> prob.f(v, q, p, t)
+            v! = (v, t, q, params) -> raw_f(v, q, p, t)
         end
 
         ode = GeometricIntegrators.ODEProblem(v!, prob.tspan, dt, vec(prob.u0))
@@ -111,17 +120,21 @@ function DiffEqBase.__solve(
 
         v! = (v, t, q, p_state, params) -> (v .= p_state)  # dq/dt = p
 
+        # Unwrap past SciMLBase v3 AutoSpecialize FunctionWrappers for the acceleration
+        # function so it accepts argument types other than those captured at construction.
+        raw_f1 = SciMLBase.unwrapped_f(prob.f.f1.f)
+
         # Handle both inplace and out-of-place problems
         if isinplace
             f! = (
                 f_out, t, q, p_state,
                 params,
-            ) -> (prob.f.f1.f(f_out, p_state, q, p, t); nothing)  # dp/dt = f1(p, q)
+            ) -> (raw_f1(f_out, p_state, q, p, t); nothing)  # dp/dt = f1(p, q)
         else
             f! = (
                 f_out, t, q, p_state,
                 params,
-            ) -> (f_out .= prob.f.f1.f(p_state, q, p, t); nothing)
+            ) -> (f_out .= raw_f1(p_state, q, p, t); nothing)
         end
 
         pode = GeometricIntegrators.PODEProblem(
