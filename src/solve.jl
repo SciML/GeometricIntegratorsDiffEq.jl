@@ -15,10 +15,6 @@ function DiffEqBase.__solve(
         error("dt required for fixed timestep methods.")
     end
 
-    # DiffEqBase v7 passes `verbose` as a `DEVerbosity` object instead of a Bool.
-    # Treat anything that is not literally `false` as "show warnings".
-    verbose_bool = verbose !== false
-
     isstiff = !(
         alg isa Union{
             GIImplicitEuler, GIImplicitMidpoint,
@@ -26,19 +22,46 @@ function DiffEqBase.__solve(
         }
     )
 
-    if verbose_bool
-        warned = !isempty(kwargs) && check_keywords(alg, kwargs, warnlist)
-        if !(prob.f isa DiffEqBase.AbstractParameterizedFunction) && isstiff
-            if DiffEqBase.has_tgrad(prob.f)
-                @warn "Explicit t-gradient given to this stiff solver is ignored."
-                warned = true
-            end
-            if DiffEqBase.has_jac(prob.f)
-                @warn "Explicit Jacobian given to this stiff solver is ignored."
-                warned = true
-            end
+    # `verbose` may be a `Bool` (DiffEqBase v6) or a `DEVerbosity` / other
+    # `AbstractVerbositySpecifier` (DiffEqBase v7+). Route each warning through
+    # `@SciMLMessage` so a silent spec (e.g. `DEVerbosity(None())`) actually
+    # suppresses it — a `verbose !== false` guard can't, since a silent
+    # `DEVerbosity` is not `false`. The `:mismatched_input_output_type` toggle
+    # is the right DEVerbosity bucket for these: every message here reports an
+    # input the GeometricIntegrators solver cannot honor. For `Bool` verbose,
+    # `@SciMLMessage` ignores the toggle name and just maps true→WarnLevel,
+    # false→Silent.
+    warned = false
+    for (kw, val) in kwargs
+        if kw in warnlist && val !== nothing
+            @SciMLMessage(
+                string("The ", kw, " argument is ignored by ", alg, "."),
+                verbose, :mismatched_input_output_type
+            )
+            warned = true
         end
-        warned && warn_compat()
+    end
+    if !(prob.f isa DiffEqBase.AbstractParameterizedFunction) && isstiff
+        if DiffEqBase.has_tgrad(prob.f)
+            @SciMLMessage(
+                "Explicit t-gradient given to this stiff solver is ignored.",
+                verbose, :mismatched_input_output_type
+            )
+            warned = true
+        end
+        if DiffEqBase.has_jac(prob.f)
+            @SciMLMessage(
+                "Explicit Jacobian given to this stiff solver is ignored.",
+                verbose, :mismatched_input_output_type
+            )
+            warned = true
+        end
+    end
+    if warned
+        @SciMLMessage(
+            "https://docs.sciml.ai/DiffEqDocs/stable/basics/compatibility_chart/",
+            verbose, :mismatched_input_output_type
+        )
     end
 
     if callback !== nothing
