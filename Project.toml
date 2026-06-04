@@ -13,7 +13,7 @@ SciMLLogging = "a6db7da4-7206-11f0-1eab-35f2a5dbe1d1"
 [compat]
 DiffEqBase = "6.62, 7"
 ExplicitImports = "1.14.0"
-GeometricIntegrators = "0.15, 0.16"
+GeometricIntegrators = "0.15.5, 0.16"
 Reexport = "0.2, 1"
 SciMLBase = "2, 3"
 SciMLLogging = "1.10.1, 2"
