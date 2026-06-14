@@ -1,109 +1,33 @@
-using Pkg
+using SafeTestsets
 using Test
+using SciMLTesting
 
-const GROUP = get(ENV, "GROUP", "All")
-
-if GROUP == "All" || GROUP == "Core"
-    using GeometricIntegratorsDiffEq
-    using GeometricIntegrators
-    using DiffEqBase: solve, ReturnCode, SecondOrderODEProblem
-    import ODEProblemLibrary: prob_ode_2Dlinear
-
-    @testset "GeometricIntegratorsDiffEq" begin
-        @testset "Standard ODE Problems" begin
-            prob = prob_ode_2Dlinear
-
-            sol = solve(prob, GIEuler(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIMidpoint(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIHeun2(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIHeun3(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIRalston2(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIRalston3(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIRunge(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIKutta(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIRK416(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIRK438(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GISSPRK3(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GICrankNicolson(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIKraaijevangerSpijker(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIQinZhang(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GICrouzeix(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIImplicitEuler(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIImplicitMidpoint(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GISRK3(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIGLRK(2), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIRadauIA(2), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GIRadauIIA(2), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GILobattoIIIA(2), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GILobattoIIIB(2), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GILobattoIIIC(2), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GILobattoIIIC̄(2), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GILobattoIIID(2), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GILobattoIIIE(2), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GILobattoIIIF(2), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
+run_tests(;
+    core = function ()
+        @safetestset "GeometricIntegratorsDiffEq" begin
+            include("core_tests.jl")
         end
-
-        @testset "Second Order ODE Problems" begin
-            # Second order ODE problem - use the new 5-argument convention with p parameter
-            u0 = zeros(2)
-            v0 = ones(2)
-            f2 = function (dv, v, u, p, t)
-                dv .= -u
-            end
-            prob = SecondOrderODEProblem{true}(f2, v0, u0, (0.0, 5.0))
-
-            sol = solve(prob, GISymplecticEulerA(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GISymplecticEulerB(), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GILobattoIIIAIIIB(2), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
-            sol = solve(prob, GILobattoIIIBIIIA(2), dt = 0.1)
-            @test sol.retcode == ReturnCode.Success
+        return @safetestset "Explicit Imports" begin
+            include("explicit_imports_test.jl")
         end
-    end # testset GeometricIntegratorsDiffEq
-
-    # Run ExplicitImports tests
-    include("explicit_imports_test.jl")
-end
-
-# Run NoPre tests (JET and AllocCheck) in a separate environment
-if GROUP == "NoPre"
-    Pkg.activate("nopre")
-    Pkg.develop(PackageSpec(path = dirname(@__DIR__)))
-    Pkg.instantiate()
-    @time @testset "JET Tests" begin
-        include("nopre/jet.jl")
-    end
-    @time @testset "AllocCheck Tests" begin
-        include("nopre/alloc_tests.jl")
-    end
-end
+    end,
+    groups = Dict(
+        # NoPre runs the JET and AllocCheck tests in their own environment. The
+        # original dispatcher ran these only for GROUP=="NoPre" (never as part of
+        # "All"), so NoPre is an env-bearing group kept out of the curated `all`.
+        "NoPre" => (;
+            env = joinpath(@__DIR__, "NoPre"),
+            body = function ()
+                @time @safetestset "JET Tests" begin
+                    include(joinpath(@__DIR__, "NoPre", "jet.jl"))
+                end
+                return @time @safetestset "AllocCheck Tests" begin
+                    include(joinpath(@__DIR__, "NoPre", "alloc_tests.jl"))
+                end
+            end,
+        ),
+    ),
+    # The original runtests.jl ran the Core body for GROUP=All and GROUP=Core, and
+    # ran NoPre only for GROUP=NoPre (never under "All"). Curate "All" to Core only.
+    all = ["Core"],
+)
