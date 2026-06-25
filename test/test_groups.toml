@@ -3,3 +3,7 @@ versions = ["lts", "1", "pre"]
 
 [NoPre]
 versions = ["lts", "1"]
+
+[QA]
+versions = ["lts", "1"]
+in_all = false
