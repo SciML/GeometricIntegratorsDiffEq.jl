@@ -4,24 +4,18 @@ run_qa(
     GeometricIntegratorsDiffEq;
     explicit_imports = true,
     ei_kwargs = (;
-        # All qualified accesses are sourced from each name's owner, but a handful of
-        # SciMLBase API-extension points / problem types are non-public (not exported
-        # or `public`-declared) and `ArrayPartition` is reached through the non-public
-        # `DiffEqBase.RecursiveArrayTools` module. These go public as the base libraries
-        # release; ignore them until then. Source package noted per name.
+        # The handful of names below are still non-public in their owners' latest
+        # registered releases (SciMLBase 3.24.0, DiffEqBase 7.5.7): a few SciMLBase
+        # API-extension points / problem types that have not yet been `public`-declared,
+        # and `ArrayPartition` reached through the non-public `DiffEqBase.RecursiveArrayTools`
+        # module. Ignore them until they go public upstream.
         all_qualified_accesses_are_public = (;
             ignore = (
-                :AbstractDynamicalODEProblem,    # SciMLBase
-                :AbstractODEAlgorithm,           # SciMLBase
-                :AbstractODEProblem,             # SciMLBase
                 :AbstractParameterizedFunction,  # SciMLBase
                 :StandardODEProblem,             # SciMLBase
                 :__solve,                        # SciMLBase
-                :build_solution,                 # SciMLBase
-                :has_jac,                        # SciMLBase
                 :has_tgrad,                      # SciMLBase
                 :unwrapped_f,                    # SciMLBase
-                :Success,                        # SciMLBase.ReturnCode (enum member; flagged only on Julia 1.10)
                 :RecursiveArrayTools,            # DiffEqBase (module path to ArrayPartition)
             ),
         ),
