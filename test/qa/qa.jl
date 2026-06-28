@@ -12,10 +12,8 @@ run_qa(
         # Ignore them until they go public upstream.
         all_qualified_accesses_are_public = (;
             ignore = (
-                :AbstractParameterizedFunction,  # SciMLBase
                 :StandardODEProblem,             # SciMLBase
                 :__solve,                        # SciMLBase
-                :has_tgrad,                      # SciMLBase
                 :unwrapped_f,                    # SciMLBase
                 :RecursiveArrayTools,            # DiffEqBase (module path to ArrayPartition)
             ),
