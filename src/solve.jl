@@ -126,7 +126,7 @@ function SciMLBase.__solve(
             ts = (prob.tspan[1] + dt):dt:prob.tspan[end]
         end
 
-        if u0 isa DiffEqBase.RecursiveArrayTools.ArrayPartition
+        if u0 isa RecursiveArrayTools.ArrayPartition
             _timeseries = [copy(vec(q)) for q in sol.q]
         elseif u0 isa AbstractArray
             _timeseries = [reshape(copy(vec(q)), sizeu) for q in sol.q]
@@ -178,7 +178,7 @@ function SciMLBase.__solve(
         end
 
         _timeseries = [
-            DiffEqBase.RecursiveArrayTools.ArrayPartition(copy(vec(q)), copy(vec(p)))
+            RecursiveArrayTools.ArrayPartition(copy(vec(q)), copy(vec(p)))
                 for (q, p) in zip(sol.q, sol.p)
         ]
     end
