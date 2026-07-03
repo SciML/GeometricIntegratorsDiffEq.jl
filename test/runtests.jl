@@ -4,13 +4,14 @@ using SciMLTesting
 
 run_tests(;
     core = function ()
-        @safetestset "GeometricIntegratorsDiffEq" begin
+        return @safetestset "GeometricIntegratorsDiffEq" begin
             include("core_tests.jl")
         end
-        return @safetestset "Explicit Imports" begin
-            include("explicit_imports_test.jl")
-        end
     end,
+    qa = (;
+        env = joinpath(@__DIR__, "qa"),
+        body = joinpath(@__DIR__, "qa", "qa.jl"),
+    ),
     groups = Dict(
         # NoPre runs the JET and AllocCheck tests in their own environment. The
         # original dispatcher ran these only for GROUP=="NoPre" (never as part of

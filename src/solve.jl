@@ -1,5 +1,5 @@
-function DiffEqBase.__solve(
-        prob::DiffEqBase.AbstractODEProblem{uType, tType, isinplace},
+function SciMLBase.__solve(
+        prob::SciMLBase.AbstractODEProblem{uType, tType, isinplace},
         alg::AlgType,
         timeseries = nothing, ts = nothing, ks = nothing;
         verbose = true,
@@ -41,15 +41,15 @@ function DiffEqBase.__solve(
             warned = true
         end
     end
-    if !(prob.f isa DiffEqBase.AbstractParameterizedFunction) && isstiff
-        if DiffEqBase.has_tgrad(prob.f)
+    if !(prob.f isa SciMLBase.AbstractParameterizedFunction) && isstiff
+        if SciMLBase.has_tgrad(prob.f)
             @SciMLMessage(
                 "Explicit t-gradient given to this stiff solver is ignored.",
                 verbose, :mismatched_input_output_type
             )
             warned = true
         end
-        if DiffEqBase.has_jac(prob.f)
+        if SciMLBase.has_jac(prob.f)
             @SciMLMessage(
                 "Explicit Jacobian given to this stiff solver is ignored.",
                 verbose, :mismatched_input_output_type
@@ -91,7 +91,7 @@ function DiffEqBase.__solve(
     _alg = get_method_from_alg(alg)
     needs_solver = requires_newton_solver(alg)
 
-    if prob.problem_type isa DiffEqBase.StandardODEProblem
+    if prob.problem_type isa SciMLBase.StandardODEProblem
         # Create function wrapper for GeometricIntegrators API
         # GeometricIntegrators expects: v(v, t, q, params)
         # DiffEqBase provides: f(du, u, p, t) for inplace or f(u, p, t) for out-of-place
@@ -126,7 +126,7 @@ function DiffEqBase.__solve(
             ts = (prob.tspan[1] + dt):dt:prob.tspan[end]
         end
 
-        if u0 isa DiffEqBase.RecursiveArrayTools.ArrayPartition
+        if u0 isa RecursiveArrayTools.ArrayPartition
             _timeseries = [copy(vec(q)) for q in sol.q]
         elseif u0 isa AbstractArray
             _timeseries = [reshape(copy(vec(q)), sizeu) for q in sol.q]
@@ -134,7 +134,7 @@ function DiffEqBase.__solve(
             _timeseries = [q[1] for q in sol.q]
         end
 
-    elseif prob.problem_type isa DiffEqBase.AbstractDynamicalODEProblem
+    elseif prob.problem_type isa SciMLBase.AbstractDynamicalODEProblem
         # For second order / partitioned problems
         # PODE expects: v(v, t, q, p, params), f(f, t, q, p, params)
         # DiffEqBase SecondOrderODEProblem has f.f1 and f.f2:
@@ -178,12 +178,12 @@ function DiffEqBase.__solve(
         end
 
         _timeseries = [
-            DiffEqBase.RecursiveArrayTools.ArrayPartition(copy(vec(q)), copy(vec(p)))
+            RecursiveArrayTools.ArrayPartition(copy(vec(q)), copy(vec(p)))
                 for (q, p) in zip(sol.q, sol.p)
         ]
     end
 
-    return DiffEqBase.build_solution(
+    return SciMLBase.build_solution(
         prob, alg, ts, _timeseries[start_idx:end],
         timeseries_errors = timeseries_errors,
         retcode = ReturnCode.Success

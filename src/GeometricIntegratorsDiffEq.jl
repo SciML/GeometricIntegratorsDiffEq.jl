@@ -4,6 +4,7 @@ using Reexport: Reexport, @reexport
 @reexport using DiffEqBase: DiffEqBase
 using SciMLBase: SciMLBase, ReturnCode
 using SciMLLogging: @SciMLMessage
+using RecursiveArrayTools: RecursiveArrayTools
 
 using GeometricIntegrators: GeometricIntegrators, CrankNicolson, Crouzeix,
     ExplicitEuler, ExplicitMidpoint, Gauss, Heun2, Heun3, ImplicitEuler,
