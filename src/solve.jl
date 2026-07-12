@@ -113,7 +113,7 @@ function SciMLBase.__solve(
 
         ode = GeometricIntegrators.ODEProblem(v!, prob.tspan, dt, vec(prob.u0))
         if needs_solver
-            sol = integrate(ode, _alg; solver = Newton())
+            sol = integrate(ode, _alg; solver = newton_solver_method())
         else
             sol = integrate(ode, _alg)
         end
@@ -164,7 +164,7 @@ function SciMLBase.__solve(
             v!, f!, prob.tspan, dt, vec(prob.u0.x[1]), vec(prob.u0.x[2])
         )
         if needs_solver
-            sol = integrate(pode, _alg; solver = Newton())
+            sol = integrate(pode, _alg; solver = newton_solver_method())
         else
             sol = integrate(pode, _alg)
         end

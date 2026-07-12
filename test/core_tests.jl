@@ -1,68 +1,33 @@
 using GeometricIntegratorsDiffEq
 using GeometricIntegrators
-using DiffEqBase: solve, ReturnCode, SecondOrderODEProblem
+using DiffEqBase: solve, SecondOrderODEProblem
 import ODEProblemLibrary: prob_ode_2Dlinear
+using SciMLBase: successful_retcode
 using Test
+
+function test_successful_solve(prob, alg::GeometricIntegratorAlgorithm; dt)
+    sol = solve(prob, alg; dt)
+    @test successful_retcode(sol)
+    return sol
+end
 
 @testset "Standard ODE Problems" begin
     prob = prob_ode_2Dlinear
 
-    sol = solve(prob, GIEuler(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIMidpoint(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIHeun2(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIHeun3(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIRalston2(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIRalston3(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIRunge(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIKutta(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIRK416(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIRK438(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GISSPRK3(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GICrankNicolson(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIKraaijevangerSpijker(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIQinZhang(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GICrouzeix(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIImplicitEuler(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIImplicitMidpoint(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GISRK3(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIGLRK(2), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIRadauIA(2), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GIRadauIIA(2), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GILobattoIIIA(2), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GILobattoIIIB(2), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GILobattoIIIC(2), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GILobattoIIIC̄(2), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GILobattoIIID(2), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GILobattoIIIE(2), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GILobattoIIIF(2), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
+    algorithms = GeometricIntegratorAlgorithm[
+        GIEuler(), GIMidpoint(), GIHeun2(), GIHeun3(),
+        GIRalston2(), GIRalston3(), GIRunge(), GIKutta(),
+        GIRK4(), GIRK416(), GIRK438(), GISSPRK3(), GICrankNicolson(),
+        GIKraaijevangerSpijker(), GIQinZhang(), GICrouzeix(),
+        GIImplicitEuler(), GIImplicitMidpoint(), GISRK3(), GIGLRK(2),
+        GIRadauIA(2), GIRadauIIA(2), GILobattoIIIA(2),
+        GILobattoIIIB(2), GILobattoIIIC(2), GILobattoIIIC̄(2),
+        GILobattoIIID(2), GILobattoIIIE(2), GILobattoIIIF(2),
+    ]
+
+    for alg in algorithms
+        test_successful_solve(prob, alg; dt = 0.1)
+    end
 end
 
 @testset "Second Order ODE Problems" begin
@@ -74,12 +39,12 @@ end
     end
     prob = SecondOrderODEProblem{true}(f2, v0, u0, (0.0, 5.0))
 
-    sol = solve(prob, GISymplecticEulerA(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GISymplecticEulerB(), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GILobattoIIIAIIIB(2), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
-    sol = solve(prob, GILobattoIIIBIIIA(2), dt = 0.1)
-    @test sol.retcode == ReturnCode.Success
+    algorithms = GeometricIntegratorAlgorithm[
+        GISymplecticEulerA(), GISymplecticEulerB(),
+        GILobattoIIIAIIIB(2), GILobattoIIIBIIIA(2),
+    ]
+
+    for alg in algorithms
+        test_successful_solve(prob, alg; dt = 0.1)
+    end
 end

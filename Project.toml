@@ -10,6 +10,7 @@ RecursiveArrayTools = "731186ca-8d62-57ce-b412-fbd966d074cd"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
 SciMLLogging = "a6db7da4-7206-11f0-1eab-35f2a5dbe1d1"
+SimpleSolvers = "36b790f5-6434-4fbe-b711-1f64a1e2f6a2"
 
 [compat]
 DiffEqBase = "6.62, 7"
@@ -21,6 +22,7 @@ SafeTestsets = "0.0.1, 0.1"
 SciMLBase = "2, 3"
 SciMLLogging = "1.10.1, 2"
 SciMLTesting = "2.1"
+SimpleSolvers = "0.7, 0.9"
 Test = "1.10"
 julia = "1.10"
 
