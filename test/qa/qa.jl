@@ -3,6 +3,7 @@ using SciMLTesting, GeometricIntegratorsDiffEq, Test
 run_qa(
     GeometricIntegratorsDiffEq;
     explicit_imports = true,
+    api_docs_kwargs = (; rendered = true),
     ei_kwargs = (;
         # The names below are still non-public in their owner's latest registered
         # release (verified on Julia 1.12 against SciMLBase 3.28.1 that
