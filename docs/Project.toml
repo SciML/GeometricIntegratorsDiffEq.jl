@@ -1,0 +1,9 @@
+[deps]
+DiffEqBase = "2b5f629d-d688-5b77-993f-72d75c75574e"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+GeometricIntegratorsDiffEq = "5a33fad7-5ce4-5983-9f5d-5f26ceab5c96"
+
+[compat]
+DiffEqBase = "7"
+Documenter = "1"
+julia = "1.10"

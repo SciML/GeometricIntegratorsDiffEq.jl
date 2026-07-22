@@ -38,9 +38,3 @@ GISymplecticEulerB
 GILobattoIIIAIIIB
 GILobattoIIIBIIIA
 ```
-
-## Re-exported Interfaces
-
-```@docs
-GeometricIntegratorsDiffEq.DiffEqBase
-```
