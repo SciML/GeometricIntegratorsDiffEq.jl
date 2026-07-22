@@ -27,8 +27,13 @@ run_tests(;
                 end
             end,
         ),
+        "Docs" => (;
+            env = joinpath(@__DIR__, "..", "docs"),
+            body = () -> include(joinpath(@__DIR__, "..", "docs", "make.jl")),
+        ),
     ),
     # The original runtests.jl ran the Core body for GROUP=All and GROUP=Core, and
     # ran NoPre only for GROUP=NoPre (never under "All"). Curate "All" to Core only.
     all = ["Core"],
+    parent = joinpath(@__DIR__, ".."),
 )

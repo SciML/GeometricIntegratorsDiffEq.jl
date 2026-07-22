@@ -1,7 +1,6 @@
 module GeometricIntegratorsDiffEq
 
-using Reexport: Reexport, @reexport
-@reexport using DiffEqBase: DiffEqBase
+using DiffEqBase: DiffEqBase
 using SciMLBase: SciMLBase, ReturnCode
 using SciMLLogging: @SciMLMessage
 using RecursiveArrayTools: RecursiveArrayTools

@@ -36,12 +36,15 @@ object.
 
 # Examples
 
-```julia
-using DiffEqBase, GeometricIntegratorsDiffEq
+```jldoctest
+julia> using DiffEqBase, GeometricIntegratorsDiffEq
 
-f(u, p, t) = -u
-prob = ODEProblem(f, 1.0, (0.0, 1.0))
-sol = solve(prob, GIEuler(); dt = 0.1)
+julia> prob = ODEProblem((u, p, t) -> -u, [1.0], (0.0, 1.0));
+
+julia> sol = solve(prob, GIEuler(); dt = 0.1);
+
+julia> length(sol.u)
+10
 ```
 
 ```julia
@@ -66,7 +69,11 @@ Fixed-step explicit Euler wrapper for `GeometricIntegrators.ExplicitEuler`.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIEuler(); dt = 0.1)
+```
 
 Pass `GIEuler()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -82,7 +89,11 @@ Fixed-step explicit midpoint wrapper for `GeometricIntegrators.ExplicitMidpoint`
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIMidpoint(); dt = 0.1)
+```
 
 Pass `GIMidpoint()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -98,7 +109,11 @@ Fixed-step Heun second-order wrapper for `GeometricIntegrators.Heun2`.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIHeun2(); dt = 0.1)
+```
 
 Pass `GIHeun2()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -114,7 +129,11 @@ Fixed-step Heun third-order wrapper for `GeometricIntegrators.Heun3`.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIHeun3(); dt = 0.1)
+```
 
 Pass `GIHeun3()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -130,7 +149,11 @@ Fixed-step Ralston second-order wrapper for `GeometricIntegrators.Ralston2`.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIRalston2(); dt = 0.1)
+```
 
 Pass `GIRalston2()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -146,7 +169,11 @@ Fixed-step Ralston third-order wrapper for `GeometricIntegrators.Ralston3`.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIRalston3(); dt = 0.1)
+```
 
 Pass `GIRalston3()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -162,7 +189,11 @@ Fixed-step Runge second-order wrapper for `GeometricIntegrators.Runge2`.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIRunge(); dt = 0.1)
+```
 
 Pass `GIRunge()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -178,7 +209,11 @@ Fixed-step Kutta third-order wrapper for `GeometricIntegrators.Kutta3`.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIKutta(); dt = 0.1)
+```
 
 Pass `GIKutta()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -194,7 +229,11 @@ Fixed-step classical fourth-order Runge-Kutta wrapper for `GeometricIntegrators.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIRK4(); dt = 0.1)
+```
 
 Pass `GIRK4()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -210,7 +249,11 @@ Fixed-step RK416 wrapper for `GeometricIntegrators.RK416`.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIRK416(); dt = 0.1)
+```
 
 Pass `GIRK416()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -226,7 +269,11 @@ Fixed-step RK438 wrapper for `GeometricIntegrators.RK438`.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIRK438(); dt = 0.1)
+```
 
 Pass `GIRK438()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -243,7 +290,11 @@ Fixed-step third-order strong-stability-preserving Runge-Kutta wrapper for
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GISSPRK3(); dt = 0.1)
+```
 
 Pass `GISSPRK3()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -259,7 +310,11 @@ Fixed-step Crank-Nicolson wrapper for `GeometricIntegrators.CrankNicolson`.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GICrankNicolson(); dt = 0.1)
+```
 
 Pass `GICrankNicolson()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -276,7 +331,11 @@ Fixed-step Kraaijevanger-Spijker wrapper for
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIKraaijevangerSpijker(); dt = 0.1)
+```
 
 Pass `GIKraaijevangerSpijker()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -292,7 +351,11 @@ Fixed-step Qin-Zhang wrapper for `GeometricIntegrators.QinZhang`.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIQinZhang(); dt = 0.1)
+```
 
 Pass `GIQinZhang()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -308,7 +371,11 @@ Fixed-step Crouzeix wrapper for `GeometricIntegrators.Crouzeix`.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GICrouzeix(); dt = 0.1)
+```
 
 Pass `GICrouzeix()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -324,7 +391,11 @@ Fixed-step implicit Euler wrapper for `GeometricIntegrators.ImplicitEuler`.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIImplicitEuler(); dt = 0.1)
+```
 
 Pass `GIImplicitEuler()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -340,7 +411,11 @@ Fixed-step implicit midpoint wrapper for `GeometricIntegrators.ImplicitMidpoint`
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIImplicitMidpoint(); dt = 0.1)
+```
 
 Pass `GIImplicitMidpoint()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -356,7 +431,11 @@ Fixed-step third-order symplectic Runge-Kutta wrapper for `GeometricIntegrators.
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GISRK3(); dt = 0.1)
+```
 
 Pass `GISRK3()` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -370,13 +449,17 @@ Fixed-step Gauss-Legendre Runge-Kutta wrapper for `GeometricIntegrators.Gauss`.
 
 # Arguments
 
-- `s::Integer`: Number of stages in the Gauss-Legendre method.
+- `s::Int`: Number of stages in the Gauss-Legendre method.
 
 # Fields
 
 - `s::Int`: Number of stages passed to `GeometricIntegrators.Gauss`.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIGLRK(2); dt = 0.1)
+```
 
 Pass `GIGLRK(s)` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -392,13 +475,17 @@ Fixed-step Radau IA wrapper for `GeometricIntegrators.RadauIA`.
 
 # Arguments
 
-- `s::Integer`: Number of stages in the Radau IA method.
+- `s::Int`: Number of stages in the Radau IA method.
 
 # Fields
 
 - `s::Int`: Number of stages passed to `GeometricIntegrators.RadauIA`.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIRadauIA(2); dt = 0.1)
+```
 
 Pass `GIRadauIA(s)` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -414,13 +501,17 @@ Fixed-step Radau IIA wrapper for `GeometricIntegrators.RadauIIA`.
 
 # Arguments
 
-- `s::Integer`: Number of stages in the Radau IIA method.
+- `s::Int`: Number of stages in the Radau IIA method.
 
 # Fields
 
 - `s::Int`: Number of stages passed to `GeometricIntegrators.RadauIIA`.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GIRadauIIA(2); dt = 0.1)
+```
 
 Pass `GIRadauIIA(s)` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -436,13 +527,17 @@ Fixed-step Lobatto IIIA wrapper for `GeometricIntegrators.LobattoIIIA`.
 
 # Arguments
 
-- `s::Integer`: Number of stages in the Lobatto IIIA method.
+- `s::Int`: Number of stages in the Lobatto IIIA method.
 
 # Fields
 
 - `s::Int`: Number of stages passed to `GeometricIntegrators.LobattoIIIA`.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GILobattoIIIA(2); dt = 0.1)
+```
 
 Pass `GILobattoIIIA(s)` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -458,13 +553,17 @@ Fixed-step Lobatto IIIB wrapper for `GeometricIntegrators.LobattoIIIB`.
 
 # Arguments
 
-- `s::Integer`: Number of stages in the Lobatto IIIB method.
+- `s::Int`: Number of stages in the Lobatto IIIB method.
 
 # Fields
 
 - `s::Int`: Number of stages passed to `GeometricIntegrators.LobattoIIIB`.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GILobattoIIIB(2); dt = 0.1)
+```
 
 Pass `GILobattoIIIB(s)` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -480,13 +579,17 @@ Fixed-step Lobatto IIIC wrapper for `GeometricIntegrators.LobattoIIIC`.
 
 # Arguments
 
-- `s::Integer`: Number of stages in the Lobatto IIIC method.
+- `s::Int`: Number of stages in the Lobatto IIIC method.
 
 # Fields
 
 - `s::Int`: Number of stages passed to `GeometricIntegrators.LobattoIIIC`.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GILobattoIIIC(2); dt = 0.1)
+```
 
 Pass `GILobattoIIIC(s)` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -503,13 +606,17 @@ GeometricIntegrators.jl.
 
 # Arguments
 
-- `s::Integer`: Number of stages in the Lobatto IIIC-bar method.
+- `s::Int`: Number of stages in the Lobatto IIIC-bar method.
 
 # Fields
 
 - `s::Int`: Number of stages passed to `GeometricIntegrators.LobattoIIIC`.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GILobattoIIIC̄(2); dt = 0.1)
+```
 
 Pass `GILobattoIIIC̄(s)` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -525,13 +632,17 @@ Fixed-step Lobatto IIID wrapper for `GeometricIntegrators.LobattoIIID`.
 
 # Arguments
 
-- `s::Integer`: Number of stages in the Lobatto IIID method.
+- `s::Int`: Number of stages in the Lobatto IIID method.
 
 # Fields
 
 - `s::Int`: Number of stages passed to `GeometricIntegrators.LobattoIIID`.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GILobattoIIID(2); dt = 0.1)
+```
 
 Pass `GILobattoIIID(s)` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -547,13 +658,17 @@ Fixed-step Lobatto IIIE wrapper for `GeometricIntegrators.LobattoIIIE`.
 
 # Arguments
 
-- `s::Integer`: Number of stages in the Lobatto IIIE method.
+- `s::Int`: Number of stages in the Lobatto IIIE method.
 
 # Fields
 
 - `s::Int`: Number of stages passed to `GeometricIntegrators.LobattoIIIE`.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GILobattoIIIE(2); dt = 0.1)
+```
 
 Pass `GILobattoIIIE(s)` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -569,13 +684,17 @@ Fixed-step Lobatto IIIF wrapper for `GeometricIntegrators.LobattoIIIF`.
 
 # Arguments
 
-- `s::Integer`: Number of stages in the Lobatto IIIF method.
+- `s::Int`: Number of stages in the Lobatto IIIF method.
 
 # Fields
 
 - `s::Int`: Number of stages passed to `GeometricIntegrators.LobattoIIIF`.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GILobattoIIIF(2); dt = 0.1)
+```
 
 Pass `GILobattoIIIF(s)` to `solve(prob, alg; dt)` as described by
 [`GeometricIntegratorAlgorithm`](@ref).
@@ -593,7 +712,11 @@ Fixed-step symplectic Euler A wrapper for `GeometricIntegrators.SymplecticEulerA
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GISymplecticEulerA(); dt = 0.1)
+```
 
 Pass `GISymplecticEulerA()` to `solve(prob, alg; dt)` for second-order or dynamical
 ODE problems as described by [`GeometricIntegratorAlgorithm`](@ref).
@@ -609,7 +732,11 @@ Fixed-step symplectic Euler B wrapper for `GeometricIntegrators.SymplecticEulerB
 
 This type has no public fields.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GISymplecticEulerB(); dt = 0.1)
+```
 
 Pass `GISymplecticEulerB()` to `solve(prob, alg; dt)` for second-order or dynamical
 ODE problems as described by [`GeometricIntegratorAlgorithm`](@ref).
@@ -624,13 +751,17 @@ Fixed-step Lobatto IIIA-IIIB partitioned wrapper for
 
 # Arguments
 
-- `n::Integer`: Number of stages in the partitioned method.
+- `n::Int`: Number of stages in the partitioned method.
 
 # Fields
 
 - `n::Int`: Number of stages passed to `GeometricIntegrators.LobattoIIIAIIIB`.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GILobattoIIIAIIIB(2); dt = 0.1)
+```
 
 Pass `GILobattoIIIAIIIB(n)` to `solve(prob, alg; dt)` for second-order or dynamical
 ODE problems as described by [`GeometricIntegratorAlgorithm`](@ref).
@@ -647,13 +778,17 @@ Fixed-step Lobatto IIIB-IIIA partitioned wrapper for
 
 # Arguments
 
-- `n::Integer`: Number of stages in the partitioned method.
+- `n::Int`: Number of stages in the partitioned method.
 
 # Fields
 
 - `n::Int`: Number of stages passed to `GeometricIntegrators.LobattoIIIBIIIA`.
 
-# Usage
+# Examples
+
+```julia
+sol = solve(prob, GILobattoIIIBIIIA(2); dt = 0.1)
+```
 
 Pass `GILobattoIIIBIIIA(n)` to `solve(prob, alg; dt)` for second-order or dynamical
 ODE problems as described by [`GeometricIntegratorAlgorithm`](@ref).

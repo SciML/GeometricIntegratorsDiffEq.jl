@@ -7,3 +7,7 @@ versions = ["lts", "1"]
 [QA]
 versions = ["lts", "1"]
 in_all = false
+
+[Docs]
+versions = ["lts", "1"]
+in_all = false
