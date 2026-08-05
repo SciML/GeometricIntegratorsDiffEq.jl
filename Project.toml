@@ -1,6 +1,6 @@
 name = "GeometricIntegratorsDiffEq"
 uuid = "5a33fad7-5ce4-5983-9f5d-5f26ceab5c96"
-version = "2.0.0"
+version = "2.0.1"
 authors = ["Chris Rackauckas <accounts@chrisrackauckas.com>"]
 
 [deps]
