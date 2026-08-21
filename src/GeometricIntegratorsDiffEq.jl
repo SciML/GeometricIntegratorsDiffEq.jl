@@ -1,6 +1,6 @@
 module GeometricIntegratorsDiffEq
 
-using DiffEqBase: DiffEqBase
+using DiffEqBase: DiffEqBase, ODEProblem, solve
 using SciMLBase: SciMLBase, ReturnCode
 using SciMLLogging: @SciMLMessage
 using RecursiveArrayTools: RecursiveArrayTools
@@ -35,6 +35,18 @@ end
 
 include("algorithms.jl")
 include("solve.jl")
+
+using PrecompileTools: @compile_workload, @setup_workload
+
+@setup_workload begin
+    @compile_workload begin
+        GIEuler()
+        GIMidpoint()
+        GIHeun2()
+        GIGLRK(2)
+        newton_solver_method()
+    end
+end
 
 export GeometricIntegratorAlgorithm, GIEuler, GIMidpoint, GIHeun2, GIHeun3,
     GIRalston2, GIRalston3, GIRunge, GIKutta, GIRK4, GIRK416, GIRK438, GISSPRK3,

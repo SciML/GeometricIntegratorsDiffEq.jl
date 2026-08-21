@@ -6,6 +6,7 @@ authors = ["Chris Rackauckas <accounts@chrisrackauckas.com>"]
 [deps]
 DiffEqBase = "2b5f629d-d688-5b77-993f-72d75c75574e"
 GeometricIntegrators = "dcce2d33-59f6-5b8d-9047-0defad88ae06"
+PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
 RecursiveArrayTools = "731186ca-8d62-57ce-b412-fbd966d074cd"
 SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
 SciMLLogging = "a6db7da4-7206-11f0-1eab-35f2a5dbe1d1"
@@ -14,6 +15,7 @@ SimpleSolvers = "36b790f5-6434-4fbe-b711-1f64a1e2f6a2"
 [compat]
 DiffEqBase = "7.5"
 GeometricIntegrators = "0.15.5, 0.16, 0.18"
+PrecompileTools = "1.2"
 ODEProblemLibrary = "1"
 RecursiveArrayTools = "4"
 SafeTestsets = "0.1"
