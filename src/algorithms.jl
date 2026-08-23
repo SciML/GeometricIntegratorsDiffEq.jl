@@ -37,7 +37,7 @@ object.
 # Examples
 
 ```jldoctest
-julia> using DiffEqBase, GeometricIntegratorsDiffEq
+julia> using GeometricIntegratorsDiffEq
 
 julia> prob = ODEProblem((u, p, t) -> -u, [1.0], (0.0, 1.0));
 
@@ -48,7 +48,7 @@ julia> length(sol.u)
 ```
 
 ```julia
-using DiffEqBase, GeometricIntegratorsDiffEq
+using GeometricIntegratorsDiffEq
 
 function acceleration!(dv, v, u, p, t)
     dv .= -u

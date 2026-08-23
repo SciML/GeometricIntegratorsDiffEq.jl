@@ -1,10 +1,25 @@
 module GeometricIntegratorsDiffEq
 
-using DiffEqBase: DiffEqBase, ODEProblem, solve
-using SciMLBase: SciMLBase, ReturnCode
+using DiffEqBase: DiffEqBase
+using SciMLBase: SciMLBase
 using SciMLLogging: @SciMLMessage
 using RecursiveArrayTools: RecursiveArrayTools
 using SimpleSolvers: SimpleSolvers
+
+# The SciML common interface that GeometricIntegratorsDiffEq reexports (see the second
+# `export` below), so that `using GeometricIntegratorsDiffEq` on its own is enough to
+# build a problem, solve it with one of the GeometricIntegrators methods, and inspect
+# the result -- which is exactly what the README and the docstring examples do. The
+# problem types are the ones these fixed-step methods accept: standard ODEs and the
+# dynamical/second-order problems the symplectic and partitioned methods integrate.
+# Callbacks and the iterator interface are deliberately absent: `solve` errors on a
+# `callback`, and this package implements no `init`/`step!`. Every name stays owned and
+# documented upstream.
+using SciMLBase: DynamicalODEFunction, DynamicalODEProblem, EnsembleAnalysis,
+    EnsembleDistributed, EnsembleProblem, EnsembleSerial, EnsembleSolution,
+    EnsembleSplitThreads, EnsembleSummary, EnsembleThreads, NullParameters, ODEFunction,
+    ODEProblem, ODESolution, ReturnCode, SecondOrderODEProblem, remake, solve,
+    successful_retcode
 
 using GeometricIntegrators: GeometricIntegrators, CrankNicolson, Crouzeix,
     ExplicitEuler, ExplicitMidpoint, Gauss, Heun2, Heun3, ImplicitEuler,
@@ -56,5 +71,11 @@ export GeometricIntegratorAlgorithm, GIEuler, GIMidpoint, GIHeun2, GIHeun3,
     GILobattoIIID, GILobattoIIIE, GILobattoIIIF, GIRadauIA, GIRadauIIA,
     GISymplecticEulerA, GISymplecticEulerB, GILobattoIIIAIIIB,
     GILobattoIIIBIIIA
+
+# Reexported SciML common interface; approved via `reexports_allow` in test/qa/qa.jl.
+export DynamicalODEFunction, DynamicalODEProblem, EnsembleAnalysis, EnsembleDistributed,
+    EnsembleProblem, EnsembleSerial, EnsembleSolution, EnsembleSplitThreads,
+    EnsembleSummary, EnsembleThreads, NullParameters, ODEFunction, ODEProblem,
+    ODESolution, ReturnCode, SecondOrderODEProblem, remake, solve, successful_retcode
 
 end # module
