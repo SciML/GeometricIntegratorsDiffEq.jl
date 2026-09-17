@@ -64,7 +64,10 @@ function SciMLBase.__solve(
         )
     end
 
-    if callback !== nothing
+    # DiffEqBase unconditionally forwards a callback set (possibly empty)
+    # on Julia 1.12+, so only reject callbacks that actually contain one.
+    if callback !== nothing &&
+            (!(callback isa SciMLBase.CallbackSet) || !isempty(callback))
         error("GeometricIntegrators is not compatible with callbacks.")
     end
 
