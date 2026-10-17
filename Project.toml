@@ -1,27 +1,36 @@
 name = "GeometricIntegratorsDiffEq"
 uuid = "5a33fad7-5ce4-5983-9f5d-5f26ceab5c96"
-version = "1.2.0"
+version = "2.2.2"
 authors = ["Chris Rackauckas <accounts@chrisrackauckas.com>"]
 
 [deps]
 DiffEqBase = "2b5f629d-d688-5b77-993f-72d75c75574e"
 GeometricIntegrators = "dcce2d33-59f6-5b8d-9047-0defad88ae06"
-Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
+RecursiveArrayTools = "731186ca-8d62-57ce-b412-fbd966d074cd"
 SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
+SciMLLogging = "a6db7da4-7206-11f0-1eab-35f2a5dbe1d1"
+SimpleSolvers = "36b790f5-6434-4fbe-b711-1f64a1e2f6a2"
 
 [compat]
-DiffEqBase = "6.62"
-ExplicitImports = "1.14.0"
-GeometricIntegrators = "0.15, 0.16"
-Reexport = "0.2, 1"
-SciMLBase = "2, 3"
+DiffEqBase = "7.5"
+GeometricIntegrators = "0.15.5, 0.16, 0.18"
+PrecompileTools = "1.2"
+ODEProblemLibrary = "1"
+RecursiveArrayTools = "4"
+SafeTestsets = "0.1"
+SciMLBase = "3.10"
+SciMLLogging = "2"
+SciMLTesting = "2.4"
+SimpleSolvers = "0.7, 0.9, 0.10, 0.12, 0.13, 0.14"
+Test = "1.10"
 julia = "1.10"
 
 [extras]
-ExplicitImports = "7d51a73a-1435-4ff3-83d9-f097790105c7"
 ODEProblemLibrary = "fdc4e326-1af4-4b90-96e7-779fcce2daa5"
-Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
+SciMLTesting = "09d9d899-5365-40a9-917a-5f67fddea283"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["ExplicitImports", "ODEProblemLibrary", "Pkg", "Test"]
+test = ["ODEProblemLibrary", "SafeTestsets", "SciMLTesting", "Test"]
